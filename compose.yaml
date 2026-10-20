@@ -1,0 +1,30 @@
+# Yerel Docker kurulumu: `docker compose up -d --build`, ardından http://localhost:5210
+# Oyun portu yalnızca bu bilgisayara açıktır (127.0.0.1); dışarıdan erişim Cloudflare Tunnel ile:
+# `docker compose --profile tunnel up -d --build` (TUNNEL_TOKEN .env dosyasında; paneldeki rota http://localhost:5210).
+name: tetikmeydani
+services:
+  game:
+    build: .
+    image: tetik-meydani
+    container_name: tetikmeydani
+    init: true
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${PORT:-5210}:5210"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 5210
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: tetikmeydani-tunnel
+    profiles: ["tunnel"]
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    # Oyunun ağ alanını paylaşır: paneldeki rota http://localhost:5210 doğrudan oyuna gider.
+    network_mode: "service:game"
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:-}  # boşsa cloudflared başlamaz; .env dosyasına yaz
+    depends_on:
+      game:
+        condition: service_healthy
