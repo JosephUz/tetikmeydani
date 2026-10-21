@@ -2,7 +2,7 @@
 // (çevrim içi oda) aynı kod çalışır. İnsan oyuncuların konumu kendi istemcilerinden gelir (istemci yürütür); ateşi ise
 // burada, ateş anında istemcinin gördüğü konumlara geri sarılarak (gecmis) hesaplanır.
 import { OYUNCU, SILAHLAR, SILAH_NO, MODLAR, ZORLUK, MAC } from './ayar.js';
-import { HARITALAR, haritaKullan } from './harita.js';
+import { HARITALAR, VARSAYILAN, haritaKullan } from './harita.js';
 import { hareketDurumu, isinHarita, isinKutu, vurusKutulari, gorur, tohumlu, saptir, bakis } from './fizik.js';
 import { MODELLER } from './avatar-veri.js';
 import { botAdim, botSifirla } from './bot.js';
@@ -13,8 +13,8 @@ const GECMIS_SURE = 0.35;
 const yuvarla = v => Math.round(v * 100) / 100;
 
 export class Mac {
-  constructor({ mod = 'herkes', zorluk = 'orta', harita = 'meydan', kisi, rastgele = Math.random } = {}) {
-    this.harita = HARITALAR[harita] ? harita : 'meydan'; this.H = haritaKullan(this.harita);
+  constructor({ mod = 'herkes', zorluk = 'orta', harita = VARSAYILAN, kisi, rastgele = Math.random } = {}) {
+    this.harita = HARITALAR[harita] ? harita : VARSAYILAN; this.H = haritaKullan(this.harita);
     this.mod = MODLAR[mod] ? mod : 'herkes'; this.M = MODLAR[this.mod];
     this.zorluk = ZORLUK[zorluk] ? zorluk : 'orta';
     this.kisi = kisi ?? this.M.kisi; this.r = rastgele;

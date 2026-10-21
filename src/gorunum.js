@@ -4,6 +4,7 @@ import * as T from 'three';
 import { H as ETKIN } from './harita.js';
 import { OYUNCU, SILAHLAR } from './ayar.js';
 import { karakterModeli, silahModeli, SILAH_SIRASI } from './karakter.js';
+import { mahalleAglari } from './mahalle-gorunum.js';
 
 export class Gorunum {
   constructor(tuval) {
@@ -63,7 +64,7 @@ export class Gorunum {
     const YUZ = [[[1, 0, 0], 0.86], [[-1, 0, 0], 0.8], [[0, 1, 0], 1.0], [[0, -1, 0], 0.6], [[0, 0, 1], 0.92], [[0, 0, -1], 0.84]];
     let h = 1;
     for (const k of H.kutular) {
-      if (k.su || k.gizli) continue;
+      if (k.su || k.gizli || k.voksel) continue; // voksel: Dış Mahalle'nin blokları, aşağıda blok blok çizilir
       const [x0, y0, z0] = k.a, [x1, y1, z1] = k.b, renk = new T.Color(k.renk);
       h = (h * 9301 + 49297) % 233280; const ton = 0.94 + (h / 233280) * 0.1;
       for (const [[nx, ny, nz], gol] of YUZ) {
@@ -82,6 +83,11 @@ export class Gorunum {
     geo.setAttribute('position', new T.Float32BufferAttribute(p, 3)); geo.setAttribute('normal', new T.Float32BufferAttribute(n, 3)); geo.setAttribute('color', new T.Float32BufferAttribute(c, 3)); geo.setIndex(idx);
     const m = new T.Mesh(geo, new T.MeshLambertMaterial({ vertexColors: true })); m.castShadow = true; m.receiveShadow = true;
     this.harita.add(m);
+    // Dış Mahalle: Juland'daki gibi blok blok (köşe gölgeli); çevresi uzaklara uzanan düz çim.
+    if (H.id === 'mahalle') {
+      for (const a of mahalleAglari()) this.harita.add(a);
+      const cim = new T.Mesh(new T.PlaneGeometry(700, 700), new T.MeshLambertMaterial({ color: '#86b552' })); cim.rotation.x = -Math.PI / 2; cim.position.y = -0.02; cim.receiveShadow = true; this.harita.add(cim);
+    }
     // Su (yarı saydam), zıplatma taşları, can paketleri, roketatar
     const suMat = new T.MeshLambertMaterial({ color: '#4f8fb8', transparent: true, opacity: 0.75 });
     for (const k of H.kutular.filter(k => k.su)) { const s = new T.Mesh(new T.BoxGeometry(k.b[0] - k.a[0], k.b[1] - k.a[1], k.b[2] - k.a[2]), suMat); s.position.set((k.a[0] + k.b[0]) / 2, (k.a[1] + k.b[1]) / 2, (k.a[2] + k.b[2]) / 2); this.harita.add(s); }

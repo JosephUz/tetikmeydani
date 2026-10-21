@@ -9,7 +9,7 @@ import { MODELLER, adDuzelt, avatarDuzelt } from './avatar-veri.js';
 import { cal, calKonum, sesAcik, sesAyarla, sesBaslat } from './ses.js';
 import { yerelBaglanti, sunucuBaglanti } from './ag.js';
 import { Mac } from './mac.js';
-import { HARITALAR, HARITA_SIRASI, haritaKullan } from './harita.js';
+import { HARITALAR, VARSAYILAN, haritaKullan } from './harita.js';
 
 const $ = id => document.getElementById(id);
 const sakla = { al(k, v) { try { return localStorage.getItem('tetik.' + k) ?? v; } catch { return v; } }, yaz(k, v) { try { localStorage.setItem('tetik.' + k, v); } catch { /* yok */ } } };
@@ -27,7 +27,7 @@ const secim = {
   ad: adDuzelt(sakla.al('ad', '')) || 'Oyuncu' + Math.floor(100 + Math.random() * 900),
   mod: MODLAR[sakla.al('mod')] ? sakla.al('mod') : 'herkes',
   zorluk: ZORLUK[sakla.al('zorluk')] ? sakla.al('zorluk') : 'orta',
-  harita: HARITALAR[sakla.al('harita')] ? sakla.al('harita') : 'meydan',
+  harita: VARSAYILAN, // tek harita: Dış Mahalle
 };
 let hassas = Math.max(0.3, Math.min(3, +sakla.al('hassas', '1') || 1));
 const avatarim = () => { const m = MODELLER.find(m => m.id === secim.model) ?? MODELLER[0]; return { model: m.id, ...m.avatar }; };
@@ -56,11 +56,7 @@ function anaEkranKur() {
   kartlar();
   $('ad').value = secim.ad;
   $('ad').oninput = () => { const a = adDuzelt($('ad').value); if (a) { secim.ad = a; sakla.yaz('ad', a); } };
-  // Harita kartları: ad + esin; seçince arkadaki botlu sahne o haritaya geçer.
-  const hk = $('harita');
-  for (const id of HARITA_SIRASI) { const H = HARITALAR[id], b = document.createElement('button'); b.dataset.v = id; b.innerHTML = '<b></b><small></small>'; b.querySelector('b').textContent = H.ad; b.querySelector('small').textContent = H.esin; hk.append(b); }
-  for (const b of hk.children) b.addEventListener('click', () => { secim.harita = b.dataset.v; sakla.yaz('harita', b.dataset.v); if (!oyun) { demoDurdur(); demoBaslat(); } });
-  for (const [kap, alan] of [['mod', 'mod'], ['zorluk', 'zorluk'], ['harita', 'harita']]) {
+  for (const [kap, alan] of [['mod', 'mod'], ['zorluk', 'zorluk']]) {
     const d = $(kap); const yenile = () => { for (const b of d.children) b.classList.toggle('secili', b.dataset.v === secim[alan]); };
     for (const b of d.children) b.onclick = () => { secim[alan] = b.dataset.v; sakla.yaz(alan, b.dataset.v); yenile(); };
     yenile();

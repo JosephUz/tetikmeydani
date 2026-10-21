@@ -1,11 +1,11 @@
 // Hareket ve ışın: istemcide kendi karakterin, benzetimde botlar aynı kodla yürür.
 import { OYUNCU as O } from './ayar.js';
-import { H as HARITA } from './harita.js';
+import { H as HARITA, IZ, izAnahtar } from './harita.js';
 
 const R = O.yaricap, H = O.boy, EPS = 1e-4;
 
 /** Oyuncu kutusu (ayak noktası x,y,z) hangi kutulara giriyor. */
-function carpisan(x, y, z, l = HARITA.carpanlar) {
+function carpisan(x, y, z, l = HARITA.sorgu(x - R, z - R, x + R, z + R)) {
   const s = [];
   for (const k of l) if (x + R > k.a[0] && x - R < k.b[0] && y + H > k.a[1] && y < k.b[1] && z + R > k.a[2] && z - R < k.b[2]) s.push(k);
   return s;
@@ -98,9 +98,21 @@ export function isinKutu(ox, oy, oz, dx, dy, dz, a, b, enCok = Infinity) {
   return t0;
 }
 /** Haritaya ilk çarpma mesafesi (yön birim vektör). */
+// Izgarada sütun sütun ilerler (DDA): her sütunun kutuları bir kez sınanır; sıradaki sütunun girişi en yakın çarpmadan
+// uzaksa durur.
 export function isinHarita(ox, oy, oz, dx, dy, dz, enCok = 500) {
-  let en = enCok;
-  for (const k of HARITA.carpanlar) { const t = isinKutu(ox, oy, oz, dx, dy, dz, k.a, k.b, en); if (t < en) en = t; }
+  let en = enCok; const I = HARITA.izgara, d = ++I.damga;
+  for (const k of I.buyuk) { const t = isinKutu(ox, oy, oz, dx, dy, dz, k.a, k.b, en); if (t < en) en = t; }
+  let i = Math.floor(ox / IZ), j = Math.floor(oz / IZ);
+  const ax = Math.abs(dx), az = Math.abs(dz), si = dx > 0 ? 1 : -1, sj = dz > 0 ? 1 : -1;
+  const ti = ax > 1e-9 ? IZ / ax : Infinity, tj = az > 1e-9 ? IZ / az : Infinity;
+  let ni = ax > 1e-9 ? (dx > 0 ? (i + 1) * IZ - ox : ox - i * IZ) / ax : Infinity, nj = az > 1e-9 ? (dz > 0 ? (j + 1) * IZ - oz : oz - j * IZ) / az : Infinity;
+  for (let n = 0; n < 1000; n++) {
+    const l = I.hucre.get(izAnahtar(i, j));
+    if (l) for (const k of l) { if (k._d === d) continue; k._d = d; const t = isinKutu(ox, oy, oz, dx, dy, dz, k.a, k.b, en); if (t < en) en = t; }
+    if (Math.min(ni, nj) > en) break;
+    if (ni < nj) { i += si; ni += ti; } else { j += sj; nj += tj; }
+  }
   return en;
 }
 /** Oyuncu vuruş kutuları: gövde ve kafa (ayak noktasından). */

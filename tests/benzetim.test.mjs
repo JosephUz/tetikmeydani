@@ -16,7 +16,7 @@ test('her haritada doğuş yerleri boş, takımların doğuşu var', () => {
     for (const d of H.doguslar) assert.ok(bosMu(d.x, d.y + 0.02, d.z), id + ' ' + JSON.stringify(d));
     for (const t of [0, 1]) assert.ok(H.doguslar.filter(d => d.takim === t).length >= 4, id + ' takım ' + t);
   }
-  haritaKullan('meydan');
+  haritaKullan('mahalle');
 });
 
 test('zıplatma taşları hedefe indirir (her harita)', () => {
@@ -26,18 +26,22 @@ test('zıplatma taşları hedefe indirir (her harita)', () => {
     assert.ok(Math.abs(o.y - p.hedef[1]) < 0.05, `pad ${p.x},${p.z} → y ${o.y}`);
     assert.ok(Math.hypot(o.x - p.hedef[0], o.z - p.hedef[2]) < 2, `pad ${p.x},${p.z} → ${o.x},${o.z}`);
   }
-  haritaKullan('meydan');
+  haritaKullan('mahalle');
 });
 
-test('merdivenle çatıya çıkılır, çift zıplama çalışır, Shift koşusu yürüyüşten hızlı', () => {
-  const o = kisi(-19.5, 0, -18.8, Math.PI / 2); // batıya bakar
-  let enYuksek = 0; for (let i = 0; i < 100; i++) { hareket(o, { ileri: 1, sag: 0, kos: true, yaw: o.yaw }, 1 / 60); enYuksek = Math.max(enYuksek, o.y); }
-  assert.ok(enYuksek >= 6.9, 'merdiven tepesi ' + enYuksek);
-  const z = kisi(0, 0, 12); hareket(z, { ileri: 0, sag: 0, zipla: true, yaw: 0 }, 1 / 60);
+test('merdivenle üst kata çıkılır, çift zıplama çalışır, Shift koşusu yürüyüşten hızlı', () => {
+  // İki katlı evin (x −23…−14, z −14…−6) merdiveni kuzey duvarı boyunca batıdan doğuya yükselir: önce kuzeye, ilk basamağa;
+  // sonra doğuya, üst katın döşemesine (y 4). Basamaklar bir blok (basamak payından yüksek): zıplanarak çıkılır.
+  const o = kisi(-21.5, 0, -10.5, 0); let enYuksek = 0;
+  for (let i = 0; i < 60; i++) { hareket(o, { ileri: 1, sag: 0, yaw: 0, zipla: i % 25 === 0 }, 1 / 60); enYuksek = Math.max(enYuksek, o.y); }
+  o.yaw = -Math.PI / 2; // doğuya dön
+  for (let i = 0; i < 120; i++) { hareket(o, { ileri: 1, sag: 0, yaw: o.yaw, zipla: i % 25 === 0 }, 1 / 60); enYuksek = Math.max(enYuksek, o.y); }
+  assert.ok(enYuksek >= 3.9, 'üst kat ' + enYuksek);
+  const z = kisi(-30, 0, 0); hareket(z, { ileri: 0, sag: 0, zipla: true, yaw: 0 }, 1 / 60);
   yuru(z, {}, 0.3); const once = z.y; const olay = hareket(z, { ileri: 0, sag: 0, zipla: true, yaw: 0 }, 1 / 60);
   assert.ok(olay.includes('cift'), 'çift zıplama'); yuru(z, {}, 0.2); assert.ok(z.y > once, 'ikinci zıplama yükseltir');
-  const a = kisi(-10, 0, 30), b = kisi(10, 0, 30); yuru(a, { ileri: 1 }, 1); yuru(b, { ileri: 1, kos: true }, 1);
-  assert.ok(30 - b.z > (30 - a.z) * 1.5, "koşu " + (30 - b.z) + " yürüyüş " + (30 - a.z));
+  const a = kisi(-30, 0, 18), b = kisi(-28, 0, 18); yuru(a, { ileri: 1 }, 1); yuru(b, { ileri: 1, kos: true }, 1);
+  assert.ok(18 - b.z > (18 - a.z) * 1.5, "koşu " + (18 - b.z) + " yürüyüş " + (18 - a.z));
 });
 
 test('yol ağı: her haritada doğuşlar, can paketleri ve roketatar birbirine bağlı', () => {
@@ -45,7 +49,7 @@ test('yol ağı: her haritada doğuşlar, can paketleri ve roketatar birbirine b
     const H = haritaKullan(id), ag = yolAgi(), n = [...H.doguslar.map(d => [d.x, d.y, d.z]), ...H.canlar, H.roket].map(p => ag.yakin(...p));
     for (const a of n) for (const b of n) assert.ok(yolBul(a, b), id + ' yol yok');
   }
-  haritaKullan('meydan');
+  haritaKullan('mahalle');
   const ag = yolAgi(), noktalar = [[-26, 0, -14], [-27, 7, -24], [0, 6, 0], [26, 7, 24], [0, 0, -22], [-35, 0, 0], [3.5, 0, 0.5]].map(p => ag.yakin(...p));
   for (const a of noktalar) for (const b of noktalar) assert.ok(yolBul(a, b), 'yol yok');
   assert.ok(ag.gezinti.length > 4000);

@@ -11,7 +11,7 @@ export function yolAgi() {
   const dugum = [], hucre = new Map(); // "i,j" → düğüm no listesi
   for (let i = Math.floor(sx0); i < sx1; i++) for (let j = Math.floor(sz0); j < sz1; j++) {
     const x = i + 0.5, z = j + 0.5, ustler = new Set();
-    for (const k of H.carpanlar) if (x + 0.38 > k.a[0] && x - 0.38 < k.b[0] && z + 0.38 > k.a[2] && z - 0.38 < k.b[2]) ustler.add(+k.b[1].toFixed(3));
+    for (const k of H.sorgu(x - 0.38, z - 0.38, x + 0.38, z + 0.38)) if (x + 0.38 > k.a[0] && x - 0.38 < k.b[0] && z + 0.38 > k.a[2] && z - 0.38 < k.b[2]) ustler.add(+k.b[1].toFixed(3));
     const l = [];
     for (const y of ustler) if (y >= 0 && y < 13 && bosMu(x, y + 0.02, z)) { l.push(dugum.length); dugum.push({ x, y, z, i, j, k: [] }); }
     if (l.length) hucre.set(i + ',' + j, l);

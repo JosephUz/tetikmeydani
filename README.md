@@ -19,7 +19,7 @@ npm test           # benzetim testleri (fizik, yol ağı, isabet, geri sarma, ro
 | --- | --- |
 | `src/ayar.js` | Bütün sayılar: hareket, silahlar, modlar, bot zorlukları |
 | `src/harita.js` | Harita kaydı; etkin harita `H` (fizik, yol ağı, görünüm okur). Odalar işe başlarken `haritaKullan(id)` |
-| `src/haritalar/` | Meydan (kendi haritamız), Buz Dünyası (fy_iceworld esinli), Çöl Kasabası (de_dust2 esinli: yürünen alanlar dikdörtgen, kalanı duvar) |
+| `src/haritalar/` | Tek harita: Dış Mahalle (Juland'daki Tetik Meydanı haritası). Bloklar `src/mahalle.js` + `src/bloklar.js` (Juland'dan kopya), blok blok çizimi `src/mahalle-gorunum.js` |
 | `src/fizik.js` | Hareket (çift zıplama, koşu, basamak, zıplatma), ışın–kutu, saçma tohumu |
 | `src/yol.js` | Bot yol ağı haritadan kendiliğinden çıkar (1 blokluk hücre, zıplanır engel, düşüş, zıplatma kenarı) + A* |
 | `src/mac.js` | Maç benzetimi: ateş (geri sarmalı isabet), hasar, leş, doğuş, alınanlar, roket, skor |

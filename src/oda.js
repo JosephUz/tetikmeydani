@@ -4,7 +4,7 @@ import { Mac } from './mac.js';
 import { avatarDuzelt, adDuzelt } from './avatar-veri.js';
 
 export class Oda {
-  constructor({ id = 0, ad = 'Oda', mod = 'herkes', zorluk = 'orta', harita = 'meydan', kisi, rastgele } = {}) {
+  constructor({ id = 0, ad = 'Oda', mod = 'herkes', zorluk = 'orta', harita = 'mahalle', kisi, rastgele } = {}) {
     this.id = id; this.ad = ad;
     this.mac = new Mac({ mod, zorluk, harita, kisi, rastgele });
     this.mac.botlariDuzenle(); this.mac.olaylar.length = 0;
