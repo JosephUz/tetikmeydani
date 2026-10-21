@@ -13,7 +13,8 @@ const GECMIS_SURE = 0.35;
 const yuvarla = v => Math.round(v * 100) / 100;
 
 export class Mac {
-  constructor({ mod = 'herkes', zorluk = 'orta', harita = VARSAYILAN, kisi, rastgele = Math.random } = {}) {
+  constructor({ mod = 'herkes', zorluk = 'orta', harita = VARSAYILAN, kisi, rastgele = Math.random, tekMac = false } = {}) {
+    this.tekMac = tekMac; // çevrim içi oda: maç bitince yenisi başlamaz, oda bekleme odasına döner
     this.harita = HARITALAR[harita] ? harita : VARSAYILAN; this.H = haritaKullan(this.harita);
     this.mod = MODLAR[mod] ? mod : 'herkes'; this.M = MODLAR[this.mod];
     this.zorluk = ZORLUK[zorluk] ? zorluk : 'orta';
@@ -28,19 +29,21 @@ export class Mac {
   get takimli() { return this.M.takimli; }
   olay(kime, m) { this.olaylar.push({ kime, m }); }
 
-  yeniOyuncu(ad, avatar, bot) {
+  /** takim: 0/1 verilirse (çevrim içi odada seçilen koltuk) o takım, yoksa az olan takım. */
+  yeniOyuncu(ad, avatar, bot, takim) {
     const id = this.sira++;
     const o = { id, ad, avatar, bot, takim: -1, x: 0, y: 0, z: 0, yaw: 0, pitch: 0, ...hareketDurumu(),
       can: OYUNCU.can, canli: false, olumZ: -99, korumaZ: 0, dogusNo: 0, silah: 0, sarjor: SILAHLAR.map(s => s.sarjor), sonAtis: SILAHLAR.map(() => -99),
       dolduruyorZ: 0, cephane: 0, les: 0, olum: 0, seri: 0, sonHasarZ: -99, sonSaldiran: null, bit: 0, katilZ: this.z };
-    if (this.takimli) { const say = [0, 0]; for (const p of this.oyuncular.values()) if (p.takim >= 0) say[p.takim]++; o.takim = say[0] <= say[1] ? 0 : 1; }
+    if (this.takimli && (takim === 0 || takim === 1)) o.takim = takim;
+    else if (this.takimli) { const say = [0, 0]; for (const p of this.oyuncular.values()) if (p.takim >= 0) say[p.takim]++; o.takim = say[0] <= say[1] ? 0 : 1; }
     this.oyuncular.set(id, o);
     if (bot) botSifirla(o);
     this.dogur(o);
     this.listeYolla();
     return o;
   }
-  insanEkle(ad, avatar) { const o = this.yeniOyuncu(ad, avatar, false); this.botlariDuzenle(); return o; }
+  insanEkle(ad, avatar, takim) { const o = this.yeniOyuncu(ad, avatar, false, takim); this.botlariDuzenle(); return o; }
   botEkle() {
     const kullanilan = new Set([...this.oyuncular.values()].map(o => o.ad));
     const i = BOT_ADLARI.findIndex(a => !kullanilan.has(a)), k = i < 0 ? Math.floor(this.r() * BOT_ADLARI.length) : i;
@@ -206,7 +209,7 @@ export class Mac {
     this.durum = 'son'; this.sonZ = this.z + MAC.sonBekle;
     const l = [...this.oyuncular.values()].sort((a, b) => b.les - a.les || a.olum - b.olum);
     this.kazanan = this.takimli ? (this.takimLes[0] === this.takimLes[1] ? -1 : this.takimLes[0] > this.takimLes[1] ? 0 : 1) : l[0]?.id ?? null;
-    this.olay(null, { t: 'son', kazanan: this.kazanan, takimli: this.takimli, tk: this.takimLes, l: l.map(o => [o.id, o.les, o.olum]), bekle: MAC.sonBekle });
+    this.olay(null, { t: 'son', kazanan: this.kazanan, takimli: this.takimli, tk: this.takimLes, l: l.map(o => [o.id, o.les, o.olum]), bekle: this.tekMac ? 0 : MAC.sonBekle, lobi: this.tekMac ? 1 : 0 });
   }
   yeniMac() {
     this.durum = 'oyun'; this.bitisZ = this.z + this.M.sure; this.takimLes = [0, 0]; this.kazanan = null; this.macNo++; this.mermiler = [];
@@ -228,7 +231,7 @@ export class Mac {
   adim(dt) {
     haritaKullan(this.harita);
     this.z += dt;
-    if (this.durum === 'son') { if (this.z >= this.sonZ) this.yeniMac(); return; }
+    if (this.durum === 'son') { if (!this.tekMac && this.z >= this.sonZ) this.yeniMac(); return; }
     if (this.z >= this.bitisZ) { this.bitir(); return; }
     for (const o of this.oyuncular.values()) {
       if (!o.canli) { if (this.z - o.olumZ >= OYUNCU.dogusBekle) this.dogur(o); continue; }

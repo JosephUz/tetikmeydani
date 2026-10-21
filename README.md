@@ -8,10 +8,10 @@ tüfek, keskin, pompalı, kılıç ve kulenin tepesindeki roketatar. Botlarla te
 ```
 npm install
 npm start          # http://127.0.0.1:5210  (Baslat.cmd tarayıcıyı da açar)
-npm test           # benzetim testleri (fizik, yol ağı, isabet, geri sarma, roket, oda, botlu maç)
+npm test           # benzetim (fizik, yol ağı, isabet, geri sarma, roket, oda, botlu maç) + çevrim içi odalar
 ```
 
-`?otomatik=1` botlu oyunu hemen başlatır, `?cevrimdisi=1` sunucuya bağlanmayı denemez, `?sunucu=ws://…` başka sunucu.
+`?otomatik=1` botlu oyunu hemen başlatır, `?oda=KPRT-4` o odaya kendiliğinden girer, `?cevrimdisi=1` sunucuya bağlanmayı denemez, `?sunucu=ws://…` başka sunucu.
 
 ## Düzen
 
@@ -28,10 +28,32 @@ npm test           # benzetim testleri (fizik, yol ağı, isabet, geri sarma, ro
 | `src/main.js` | İstemci: giriş, kendi karakterin (istemci yürütür), ara değerleme, göstergeler, menüler |
 | `src/gorunum.js`, `src/karakter.js` | Three.js görünüm; karakter Juland `avatar.js` oranlarında, silah tutar |
 | `src/avatar-veri.js` | Juland'dan kopya (6 hazır karakter). Juland'da değişirse buraya da kopyala |
-| `server.mjs`, `server/odalar.mjs` | Statik dosyalar + WebSocket lobisi ve odalar (30 Hz) |
+| `server.mjs`, `server/odalar.mjs` | Statik dosyalar + WebSocket: açık oda listesi, kodlu odalar, bekleme odası, maç (30 Hz) |
 
 Ağ: herkes kendi konumunu yollar (30 Hz), sunucu ateşi istemcinin gördüğü ana (en çok 0,3 sn) geri sararak hesaplar.
 Botlar ve roketler sunucuda yürür. Oda 8 koltuk; boş koltuklarda bot oynar.
+
+## Çevrim içi akış
+
+Bütün josephuz oyunlarındaki oda standardına uyar (`josephuz/docs/oda-standardi.md`):
+
+- **Ana ekran:** ADIN · karakter, MOD, BOTLAR ve **TEK BAŞINA ↗** · **ÇEVRİM İÇİ** (`● N çevrim içi`): **HIZLI KATIL →**,
+  **ODA KUR**, **ODAYA KATIL** (ODA KODU + KATIL, Enter) ve **AÇIK ODALAR** listesi (kuran · mod · zorluk · n/8 oyuncu,
+  LOBİDE/MAÇTA, KATIL →/DOLU). Sunucuya bağlanılamazken düğmeler kapalı ve YAKINDA, liste gizli. Listeyi sunucu,
+  odada olmayan bağlantılara değişince kendisi yollar (~250 ms toplar); istemci yoklamaz.
+- **Oda kodu** `KPRT-4` (4 harf ABCDEFGHJKLMNPRSTUVYZ + rakam 23456789, benzersiz); `KPRT4` yazılsa da olur.
+  Davet linki `https://tetikmeydani.josephuz.com/?oda=KPRT-4`; odadayken adres çubuğu `?oda=KOD` gösterir.
+- **Oda kur** odayı hemen ana ekrandaki mod ve bot zorluğuyla, herkese açık kurar. **Hızlı katıl** önce lobideki, sonra
+  insanı çok olan açık odaya oturtur (maçtaki oda da olur); yoksa yeni açık oda kurar.
+- **Bekleme odası:** kod, Linki kopyala, AÇIK ODA / ÖZEL ODA. Takım Çatışması'nda Mavi (koltuk 1–4) ve Kırmızı (5–8)
+  sütunları, Herkes Herkese'de 8 koltuk. Boş koltuğa tıklayan oraya geçer; kuran oyuncuyu sürükler ya da tıklayıp
+  koltuğa tıklar (doluysa yer değişir). Kuran MOD, BOT ZORLUĞU ve ODA (Herkese açık / Özel) seçer, **MAÇI BAŞLAT ↗**.
+  Takımlar koltuklardan gelir, boş koltukları botlar doldurur; bot zorluğu odanın ayarıdır.
+- **Maç sürerken** gelen (kod, link, liste, hızlı katıl) doğrudan maça girer, bir botun yerini alır.
+- **Maç bitince** oda bekleme odasına döner; sonuç ekranında **LOBİYE DÖN**. Duraklat menüsünde çevrim içiyken
+  **Odadan çık**, tek başınayken **Ana menü**. Tek başına oyunda maçlar eskisi gibi kendiliğinden yeniden başlar.
+- **Kopma:** koltuk 60 sn saklanır (maçta yerini bot oynar); sayfa yenilenince sessionStorage'daki jetonla aynı
+  koltuğa dönülür. Kuran çıkarsa kuranlık sıradaki insana geçer; kimse kalmayınca oda kapanır.
 
 ## Yayın
 

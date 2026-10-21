@@ -27,18 +27,25 @@
       <h1>Meydanda son sözü<br><em>tetik söyler.</em></h1>
       <p class="intro">Dış mahallede ev ev çatış, camdan ateş et, karakoldan depoya koş.<br>Roketatar kalpazan evinin önünde. Önce kim varacak?</p>
       <div class="secim">
-        <span class="eyebrow">KARAKTERİN</span>
-        <div id="karakterler" role="radiogroup" aria-label="Karakter"></div>
         <label class="ad-alan"><span class="eyebrow">ADIN</span><input id="ad" maxlength="16" autocomplete="nickname" spellcheck="false"></label>
+        <span class="eyebrow karakter-baslik">KARAKTERİN</span>
+        <div id="karakterler" role="radiogroup" aria-label="Karakter"></div>
       </div>
       <div class="secim satir">
         <div><span class="eyebrow">MOD</span><div class="dilim" id="mod"><button data-v="herkes" class="secili">Herkes Herkese</button><button data-v="takim">Takım Çatışması</button></div></div>
         <div><span class="eyebrow">BOTLAR</span><div class="dilim" id="zorluk"><button data-v="kolay">Kolay</button><button data-v="orta" class="secili">Orta</button><button data-v="zor">Zor</button></div></div>
       </div>
-      <div class="ana-dugmeler"><button id="oyna" class="primary">BOTLARLA OYNA <span>→</span></button><button id="cevrimici" class="outline" disabled>ÇEVRİM İÇİ · <b id="cevrimici-durum">Yakında</b></button></div>
+      <div class="ana-dugmeler"><button id="oyna" class="primary">TEK BAŞINA <span>↗</span></button></div>
       <p id="dokunmatik-uyari" hidden>Tetik Meydanı klavye ve fareyle oynanır. Bilgisayardan aç.</p>
+      <div id="cevrimici" class="cevrimici kapali">
+        <div class="cb-baslik"><span class="eyebrow">ÇEVRİM İÇİ</span><span id="cevrimici-sayi" class="cb-sayi" hidden>● 0 çevrim içi</span></div>
+        <div class="cb-dugmeler"><button id="hizli" class="primary" disabled>HIZLI KATIL <span>→</span><i class="yakinda">YAKINDA</i></button><button id="oda-kur" class="outline" disabled>ODA KUR<i class="yakinda">YAKINDA</i></button><button id="odaya-katil" class="outline" disabled aria-expanded="false">ODAYA KATIL<i class="yakinda">YAKINDA</i></button></div>
+        <div id="kod-satir" class="kod-satir" hidden><label><span class="eyebrow">ODA KODU</span><input id="kod" maxlength="6" autocomplete="off" spellcheck="false" placeholder="KPRT-4"></label><button id="kod-katil" class="outline">KATIL</button></div>
+        <p id="cevrimici-durum" class="cb-durum" role="status"></p>
+        <div id="acik-odalar" hidden><span class="eyebrow">AÇIK ODALAR <b id="oda-sayi">0</b></span><div id="odalar"></div></div>
+      </div>
     </div>
-    <div class="sahne-yazi"><span class="eyebrow" id="sahne-baslik">MEYDAN</span><p id="sahne-metin">Dört bina, dört köprü, bir kule.</p><small id="sahne-esin"></small><small>8 OYUNCU · BOTLAR BOŞ KOLTUKLARI DOLDURUR</small></div>
+    <div class="sahne-yazi"><span class="eyebrow" id="sahne-baslik">MEYDAN</span><p id="sahne-metin">Dört bina, dört köprü, bir kule.</p><small id="sahne-esin"></small><small>8 KOLTUK · BOTLAR BOŞ KOLTUKLARI DOLDURUR</small></div>
     <footer>JOSEPHUZ OYUNLARI <span>ARENA ATIŞI · TARAYICIDA</span></footer>
   </section>
 
@@ -54,13 +61,24 @@
     <div id="cephane-kutu" class="panel"><span class="eyebrow" id="silah-ad">TÜFEK</span><b id="cephane">30</b><small id="cephane-yedek">/ ∞</small><div class="meter"><i id="doldur-bar"></i></div><div id="silahlar"></div></div>
     <div id="olum" hidden><span class="eyebrow">DÜŞTÜN</span><h2 id="olum-baslik"></h2><p id="olum-sayac"></p></div>
     <div id="skor-tablo" class="panel" hidden><span class="eyebrow" id="skor-baslik">SKOR</span><table><thead><tr><th>Oyuncu</th><th>Leş</th><th>Ölüm</th></tr></thead><tbody id="skor-satir"></tbody></table></div>
-    <div id="son" class="panel" hidden><span class="eyebrow">MAÇ BİTTİ</span><h2 id="son-baslik"></h2><table><thead><tr><th>#</th><th>Oyuncu</th><th>Leş</th><th>Ölüm</th></tr></thead><tbody id="son-satir"></tbody></table><p id="son-sayac"></p></div>
+    <div id="son" class="panel" hidden><span class="eyebrow">MAÇ BİTTİ</span><h2 id="son-baslik"></h2><table><thead><tr><th>#</th><th>Oyuncu</th><th>Leş</th><th>Ölüm</th></tr></thead><tbody id="son-satir"></tbody></table><p id="son-sayac"></p><button id="son-lobi" class="primary" hidden>LOBİYE DÖN <span>→</span></button></div>
     <button id="kilit" class="panel" hidden>Oynamak için tıkla</button>
   </div>
 
   <div id="toast" role="status" aria-live="polite" hidden></div>
 
-  <dialog id="lobi-dialog" aria-labelledby="lobi-baslik"><div class="dialog-inner"><button class="close" data-close aria-label="Kapat">×</button><span class="eyebrow">ÇEVRİM İÇİ</span><h2 id="lobi-baslik">Meydana çık.</h2><p id="lobi-bilgi">Odalar 8 kişilik; boş koltuklarda botlar oynar. İnsan gelince bir bot yerini bırakır.</p><div id="odalar"></div><div class="dialog-buttons"><button id="oda-kur" class="outline">Yeni oda kur</button><button id="hizli" class="primary">HIZLI KATIL →</button></div></div></dialog>
+  <section id="bekleme" hidden aria-labelledby="bk-kod"><div class="bekleme-ic panel">
+    <div class="bk-ust"><div><span class="eyebrow" id="bk-goz">ODA</span><div class="bk-kod" id="bk-kod"></div><span class="bk-gorunur" id="bk-gorunur"></span></div><div class="bk-link"><button id="bk-kopyala" class="outline">Linki kopyala</button><small id="bk-link-yazi" hidden></small></div></div>
+    <div id="bk-koltuklar"></div>
+    <p class="bk-ipucu" id="bk-ipucu"></p>
+    <div class="bk-ayar">
+      <div><span class="eyebrow">MOD</span><div class="dilim" id="bk-mod"><button data-v="herkes">Herkes Herkese</button><button data-v="takim">Takım Çatışması</button></div></div>
+      <div><span class="eyebrow">BOT ZORLUĞU</span><div class="dilim" id="bk-zorluk"><button data-v="kolay">Kolay</button><button data-v="orta">Orta</button><button data-v="zor">Zor</button></div></div>
+      <div><span class="eyebrow">ODA</span><div class="dilim" id="bk-ozel"><button data-v="0">Herkese açık</button><button data-v="1">Özel</button></div></div>
+    </div>
+    <p class="bk-bilgi" id="bk-bilgi"></p>
+    <div class="bk-dugmeler"><button id="bk-cik" class="outline">Odadan çık</button><button id="bk-basla" class="primary">MAÇI BAŞLAT <span>↗</span></button></div>
+  </div></section>
 
   <dialog id="menu-dialog" aria-labelledby="pause-title"><div class="dialog-inner"><span class="eyebrow" id="menu-ust">BOTLU OYUN DURAKLATILDI</span><h2 id="pause-title">Bir nefes arası.</h2><div class="menu-stack"><button id="resume" class="primary">DEVAM ET →</button><button id="pause-help" class="outline">Kontroller <kbd>F1</kbd></button><button id="pause-sound" class="outline">Ses: açık</button><label class="outline hassas">Fare hassasiyeti <input id="hassasiyet" type="range" min="0.3" max="3" step="0.05" value="1"><output id="hassasiyet-deger">1,00</output></label><button id="back-home" class="outline">Ana menü</button><a class="outline" href="https://www.josephuz.com/">josephuz.com'a dön</a></div></div></dialog>
 
