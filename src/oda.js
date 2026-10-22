@@ -7,7 +7,7 @@ import { avatarDuzelt, adDuzelt } from './avatar-veri.js';
 export const KOD_HARF = 'ABCDEFGHJKLMNPRSTUVYZ', KOD_RAKAM = '23456789';
 /** Yazılan kodu düzeltir: büyük harf, tiresiz yazıldıysa tire eklenir (KPRT4 → KPRT-4). Biçime uymazsa null. */
 export function kodDuzelt(s) {
-  const k = String(s ?? '').toLocaleUpperCase('tr').replace(/İ/g, 'I').replace(/[^A-Z0-9]/g, '');
+  const k = String(s ?? '').toLocaleUpperCase('tr').replace(/\u0130/g, 'I').replace(/[^A-Z0-9]/g, '');
   return /^[A-Z]{4}[0-9]$/.test(k) ? k.slice(0, 4) + '-' + k[4] : null;
 }
 

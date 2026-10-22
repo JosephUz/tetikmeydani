@@ -25,7 +25,7 @@ const DOGUSLAR = [
 const CANLAR = [[-18.5, 0, -9.5], [18.5, 0, -9.5], [-18.5, 0, 9.5], [18.5, 0, 9.5]];
 
 export default {
-  id: 'mahalle', ad: 'Dış Mahalle', slogan: 'Karakol, depo, arada camlı evler.', esin: 'Juland',
+  id: 'mahalle', ad: 'Dış Mahalle', esin: 'Juland',
   sinir: [x0, z0, x1, z1], kutular: KUTULAR, padler: [], canlar: CANLAR, roket: [0, 0, -8.5],
   doguslar: DOGUSLAR,
   gok: { ust: '#5d9fd0', alt: '#d8e6ea', sis: '#b9d3e0', sisUzak: 180, tepe: '#7d9a6a' },

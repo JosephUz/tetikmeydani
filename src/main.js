@@ -1,7 +1,7 @@
 // Tetik Meydanı istemcisi: ana ekran (arkada botlar oynar), botlu oyun (tarayıcıdaki Oda) ve çevrim içi oda.
 // Kendi karakterin burada yürür (anında tepki); ateş sunucuya/odaya gider, hasarı orası hesaplar.
 import * as T from 'three';
-import { OYUNCU, SILAHLAR, SILAH_NO, MODLAR, ZORLUK, MAC, TAKIM_RENK, TAKIM_AD } from './ayar.js';
+import { OYUNCU, SILAHLAR, SILAH_NO, MODLAR, ZORLUK, MAC, TAKIM_RENK } from './ayar.js';
 import { hareket, hareketDurumu, bakis, isinHarita, isinKutu, vurusKutulari, tohumlu, saptir, gorur } from './fizik.js';
 import { Gorunum } from './gorunum.js';
 import { karakterModeli } from './karakter.js';
@@ -11,21 +11,27 @@ import { yerelBaglanti, sunucuBaglanti } from './ag.js';
 import { kodDuzelt } from './oda.js';
 import { Mac } from './mac.js';
 import { HARITALAR, VARSAYILAN, haritaKullan } from './harita.js';
+import { t, DIL, DILLER, sayi, dilUygula, dilDugmesi } from './dil.js';
 
 const $ = id => document.getElementById(id);
 const sakla = { al(k, v) { try { return localStorage.getItem('tetik.' + k) ?? v; } catch { return v; } }, yaz(k, v) { try { localStorage.setItem('tetik.' + k, v); } catch { /* yok */ } } };
 const simdi = () => performance.now() / 1000;
 const aci = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
 const PARAM = new URLSearchParams(location.search);
+dilUygula(); dilDugmesi($('dil'));
+/** Dile göre büyük harf (Türkçede i → İ). */
+const buyuk = s => String(s).toLocaleUpperCase(DIL === 'tr' ? 'tr' : 'en');
+const silahAd = S => S ? t(`silah.${S.id}`) : '';
+const modAd = id => t(`mod.${id}`), zorlukAd = id => t(`zorluk.${id}`), takimAd = i => t(`takim.${i}`);
 
 let gor;
-try { gor = new Gorunum($('sahne')); } catch (e) { $('fatal').hidden = false; $('fatal-message').textContent = 'Tarayıcın WebGL açamadı: ' + (e?.message ?? e); throw e; }
+try { gor = new Gorunum($('sahne')); } catch (e) { $('fatal').hidden = false; $('fatal-message').textContent = t('hata.webgl') + (e?.message ?? e); throw e; }
 const boyutla = () => gor.boyut(innerWidth, innerHeight); addEventListener('resize', boyutla); boyutla();
 
 // ——— Seçimler ———
 const secim = {
   model: MODELLER.some(m => m.id === sakla.al('model')) ? sakla.al('model') : MODELLER[Math.floor(Math.random() * MODELLER.length)].id,
-  ad: adDuzelt(sakla.al('ad', '')) || 'Oyuncu' + Math.floor(100 + Math.random() * 900),
+  ad: adDuzelt(sakla.al('ad', '')) || t('ana.oyuncu') + Math.floor(100 + Math.random() * 900),
   mod: MODLAR[sakla.al('mod')] ? sakla.al('mod') : 'herkes',
   zorluk: ZORLUK[sakla.al('zorluk')] ? sakla.al('zorluk') : 'orta',
   harita: VARSAYILAN, // tek harita: Dış Mahalle
@@ -66,22 +72,23 @@ function anaEkranKur() {
 }
 
 // ——— Ses düğmeleri ———
-function sesYaz() { for (const id of ['sound', 'pause-sound']) { $(id).textContent = 'Ses: ' + (sesAcik() ? 'açık' : 'kapalı'); $(id).classList.toggle('muted', !sesAcik()); } }
+function sesYaz() { for (const id of ['sound', 'pause-sound']) { $(id).textContent = t(sesAcik() ? 'ses.acik' : 'ses.kapali'); $(id).classList.toggle('muted', !sesAcik()); } }
 for (const id of ['sound', 'pause-sound']) $(id).onclick = () => { sesAyarla(!sesAcik()); sesYaz(); };
 sesYaz();
 const yardimAc = () => { if (!$('help-dialog').open) $('help-dialog').showModal(); };
 $('help').onclick = yardimAc; $('pause-help').onclick = yardimAc;
 for (const b of document.querySelectorAll('[data-close]')) b.onclick = () => b.closest('dialog').close();
 $('brand').onclick = e => e.preventDefault();
-$('hassasiyet').value = hassas; $('hassasiyet-deger').textContent = hassas.toFixed(2).replace('.', ',');
-$('hassasiyet').oninput = () => { hassas = +$('hassasiyet').value; sakla.yaz('hassas', hassas); $('hassasiyet-deger').textContent = hassas.toFixed(2).replace('.', ','); };
+const hassasYaz = () => { $('hassasiyet-deger').textContent = sayi(hassas, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+$('hassasiyet').value = hassas; hassasYaz();
+$('hassasiyet').oninput = () => { hassas = +$('hassasiyet').value; sakla.yaz('hassas', hassas); hassasYaz(); };
 
 // ——— Ana ekran arka planı: botlar kendi kendine oynar ———
 let demo = null, demoBirikim = 0;
 function demoBaslat() {
   gor.haritaYukle(haritaKullan(secim.harita));
   // Sağ alttaki tanıtım kutusu seçilen haritayı anlatır.
-  const H = HARITALAR[secim.harita]; $('sahne-baslik').textContent = H.ad.toLocaleUpperCase('tr'); $('sahne-metin').textContent = H.slogan; $('sahne-esin').textContent = H.esin.toLocaleUpperCase('tr');
+  const H = HARITALAR[secim.harita]; $('sahne-baslik').textContent = H.ad.toLocaleUpperCase('tr'); $('sahne-metin').textContent = t(`harita.${H.id}.slogan`); $('sahne-esin').textContent = buyuk(H.esin);
   demo = new Mac({ mod: 'herkes', zorluk: 'orta', harita: secim.harita }); demo.botlariDuzenle(); demo.olaylar.length = 0;
   for (const o of demo.oyuncular.values()) gor.oyuncuKur('d' + o.id, o.avatar, null);
 }
@@ -121,8 +128,8 @@ function oyunBaslat(baglanti) {
   document.body.classList.add('oyunda');
   $('ana').hidden = true; $('oyun-ui').hidden = false; $('son').hidden = true; $('olum').hidden = true;
   $('lesler').innerHTML = '';
-  $('menu-ust').textContent = bag.yerel ? 'BOTLU OYUN DURAKLATILDI' : 'ÇEVRİM İÇİ · MAÇ SÜRÜYOR';
-  $('back-home').textContent = bag.yerel ? 'Ana menü' : 'Odadan çık';
+  $('menu-ust').textContent = t(bag.yerel ? 'menu.botlu' : 'menu.cevrimici');
+  $('back-home').textContent = t(bag.yerel ? 'menu.ana' : 'bekleme.cik');
   gor.el.visible = true;
   sesBaslat();
   kilitle();
@@ -198,12 +205,12 @@ function isle(m) {
     case 'al':
       if (m.id === oyun.benId) {
         cal('al');
-        if (m.p === 'r') { ben.cephane = m.c; silahSec(SILAH_NO.roket); mesaj('ROKETATAR', `${m.c} roket · 5`); } else mesaj('+' + MAC.canPaketi + ' CAN');
+        if (m.p === 'r') { ben.cephane = m.c; silahSec(SILAH_NO.roket); mesaj(buyuk(t('silah.roket')), t('hud.roketAlindi', { n: m.c })); } else mesaj(t('hud.canAlindi', { n: MAC.canPaketi }));
       }
       break;
     case 'pad': { const v = gor.oyuncular.get(m.id); if (v) calKonum('pad', v.x, v.y, v.z, dinleyici(), 40); break; }
     case 'son': sonGoster(m); break;
-    case 'basla': $('son').hidden = true; oyun.durum = 'oyun'; mesaj('YENİ MAÇ'); break;
+    case 'basla': $('son').hidden = true; oyun.durum = 'oyun'; mesaj(t('hud.yeniMac')); break;
   }
 }
 const dinleyici = () => ({ x: ben.x, y: ben.y, z: ben.z, yaw: ben.yaw });
@@ -225,24 +232,24 @@ function lesYaz(m) {
   const sinif = id => !oyun.takimli || id == null ? '' : oyun.roster.get(id)?.takim === 0 ? 'm' : 'k';
   const d = document.createElement('div'); d.className = 'les' + (m.o === oyun.benId || m.h === oyun.benId ? ' benim' : '');
   const S = SILAHLAR[m.s];
-  d.innerHTML = m.o == null ? `<span class="${sinif(m.h)}"></span><span class="s">${S?.ad.toUpperCase() ?? ''}</span><span class="${sinif(m.h)}"></span>` : `<span class="${sinif(m.o)}"></span><span class="s">${S?.ad.toUpperCase() ?? ''}</span><span class="${sinif(m.h)}"></span>${m.k ? '<span class="kafa">◎</span>' : ''}`;
-  const sp = d.querySelectorAll('span'); if (m.o == null) { sp[0].textContent = ad(m.h); sp[1].textContent = 'KENDİNİ VURDU'; sp[2].textContent = ''; } else { sp[0].textContent = ad(m.o); sp[2].textContent = ad(m.h); }
+  d.innerHTML = m.o == null ? `<span class="${sinif(m.h)}"></span><span class="s">${buyuk(silahAd(S))}</span><span class="${sinif(m.h)}"></span>` : `<span class="${sinif(m.o)}"></span><span class="s">${buyuk(silahAd(S))}</span><span class="${sinif(m.h)}"></span>${m.k ? '<span class="kafa">◎</span>' : ''}`;
+  const sp = d.querySelectorAll('span'); if (m.o == null) { sp[0].textContent = ad(m.h); sp[1].textContent = t('hud.kendini'); sp[2].textContent = ''; } else { sp[0].textContent = ad(m.o); sp[2].textContent = ad(m.h); }
   $('lesler').prepend(d); while ($('lesler').children.length > 6) $('lesler').lastChild.remove(); setTimeout(() => d.remove(), 5000);
   if (m.o === oyun.benId && m.h !== oyun.benId) {
-    cal('les'); const SERI = { 2: 'ÇİFTE', 3: 'ÜÇLEME', 5: 'DURDURULAMAZ', 8: 'MEYDANIN SAHİBİ' };
-    if (SERI[m.seri]) { cal('seri'); mesaj(SERI[m.seri], `${m.seri} leş üst üste`); } else mesaj(m.k ? 'KAFADAN!' : 'LEŞ', ad(m.h));
+    cal('les'); const SERI = [2, 3, 5, 8];
+    if (SERI.includes(m.seri)) { cal('seri'); mesaj(t(`hud.seri.${m.seri}`), t('hud.seri', { n: m.seri })); } else mesaj(t(m.k ? 'hud.kafadan' : 'hud.les'), ad(m.h));
   }
-  if (m.h === oyun.benId) { oyun.olen = m.o; oyun.olumYazildi = true; $('olum-baslik').textContent = m.o == null ? 'Kendi roketine yakalandın.' : `${ad(m.o)} seni ${S?.ad ?? ''} ile vurdu.`; }
+  if (m.h === oyun.benId) { oyun.olen = m.o; oyun.olumYazildi = true; $('olum-baslik').textContent = m.o == null ? t('olum.kendi') : t('olum.vurdu', { ad: ad(m.o), silah: silahAd(S) }); }
 }
 function olunce() {
   ben.canli = false; oyun.olumZ = simdi(); cal('olum', 0.8);
-  $('olum').hidden = false; if (!oyun.olumYazildi) $('olum-baslik').textContent = 'Düştün.';
+  $('olum').hidden = false; if (!oyun.olumYazildi) $('olum-baslik').textContent = t('olum.dustunNokta');
   $('durbun').hidden = true; fare.sag = false;
 }
 function sonGoster(m) {
   oyun.durum = 'son'; oyun.sonBitis = simdi() + m.bekle;
   const ad = id => oyun.roster.get(id)?.ad ?? '?';
-  $('son-baslik').textContent = m.takimli ? (m.kazanan < 0 ? 'Berabere.' : `${TAKIM_AD[m.kazanan]} takım kazandı.`) : m.kazanan === oyun.benId ? 'Meydan senin!' : `${ad(m.kazanan)} kazandı.`;
+  $('son-baslik').textContent = m.takimli ? (m.kazanan < 0 ? t('son.berabere') : t('son.takim', { takim: takimAd(m.kazanan) })) : m.kazanan === oyun.benId ? t('son.sen') : t('son.kazandi', { ad: ad(m.kazanan) });
   const tb = $('son-satir'); tb.innerHTML = '';
   m.l.forEach(([id, l, o], i) => { const tr = document.createElement('tr'); const r = oyun.roster.get(id); tr.className = (id === oyun.benId ? 'ben ' : '') + (oyun.takimli && r ? (r.takim === 0 ? 'mavi' : 'kirmizi') : ''); tr.innerHTML = `<td>${i + 1}</td><td></td><td>${l}</td><td>${o}</td>`; tr.children[1].textContent = ad(id); if (r?.bot) tr.children[1].insertAdjacentHTML('beforeend', '<span class="bot">BOT</span>'); tb.append(tr); });
   const lobi = !!m.lobi; $('son-lobi').hidden = !lobi; $('son-sayac').hidden = lobi;
@@ -434,11 +441,11 @@ function gostergeler(zaman) {
   yaz('can', String(Math.max(0, Math.ceil(ben.can))));
   $('can-bar').style.width = Math.max(0, ben.can) + '%'; $('can-kutu').classList.toggle('dusuk', ben.can < 35);
   $('y-cift').classList.toggle('bekle', !ben.yerde && ben.havaHak <= 0);
-  yaz('silah-ad', S.ad.toLocaleUpperCase('tr'));
+  yaz('silah-ad', buyuk(silahAd(S)));
   yaz('cephane', S.yakin ? '—' : ben.silah === SILAH_NO.roket ? String(ben.cephane) : String(ben.sarjor[ben.silah]));
-  yaz('cephane-yedek', S.yakin ? '' : ben.silah === SILAH_NO.roket ? 'roket' : '/ ' + S.sarjor);
+  yaz('cephane-yedek', S.yakin ? '' : ben.silah === SILAH_NO.roket ? t('hud.roket') : '/ ' + S.sarjor);
   $('doldur-bar').style.width = ben.dolduruyorT > 0 ? (100 * (1 - ben.dolduruyorT / SILAHLAR[ben.doldurSilah].doldur)) + '%' : '0%';
-  const sl = $('silahlar'); if (!sl.children.length) for (const s of SILAHLAR) { const e = document.createElement('span'); e.textContent = s.tus + ' ' + s.ad; sl.append(e); }
+  const sl = $('silahlar'); if (!sl.children.length) for (const s of SILAHLAR) { const e = document.createElement('span'); e.textContent = s.tus + ' ' + silahAd(s); sl.append(e); }
   [...sl.children].forEach((e, i) => { e.classList.toggle('secili', i === ben.silah); e.classList.toggle('yok', i === SILAH_NO.roket && ben.cephane <= 0); });
   // Nişangâh açıklığı: silahın saçılması + ateşten sonra yayılma + hava/koşu
   const nisan = fare.sag && !S.yakin, sac = (nisan ? S.nisanSacilma : S.sacilma ?? 0) + ben.yayilma * 0.03 + (ben.yerde ? 0 : 0.015);
@@ -450,11 +457,11 @@ function gostergeler(zaman) {
   yaz('sure', `${dk}:${String(sn).padStart(2, '0')}`);
   const M = MODLAR[oyun.mod];
   let sk;
-  if (oyun.takimli) { const t = oyun.roster.get(oyun.benId)?.takim ?? 0; sk = `<span class="mavi${t === 0 ? ' ben' : ''}">Mavi ${oyun.tk[0]}</span><span class="kirmizi${t === 1 ? ' ben' : ''}">Kırmızı ${oyun.tk[1]}</span><span>${M.hedef} leşte biter</span>`; }
-  else { const l = [...oyun.skor.entries()].sort((a, b) => b[1].les - a[1].les), benim = oyun.skor.get(oyun.benId)?.les ?? 0, lider = l.find(([id]) => id !== oyun.benId); sk = `<span class="ben">Sen ${benim}</span><span>${lider ? (oyun.roster.get(lider[0])?.ad ?? '') + ' ' + lider[1].les : ''}</span><span>${M.hedef} leşte biter</span>`; }
+  if (oyun.takimli) { const tk = oyun.roster.get(oyun.benId)?.takim ?? 0; sk = `<span class="mavi${tk === 0 ? ' ben' : ''}">${takimAd(0)} ${oyun.tk[0]}</span><span class="kirmizi${tk === 1 ? ' ben' : ''}">${takimAd(1)} ${oyun.tk[1]}</span><span>${kacis(t('hud.hedef', { n: M.hedef }))}</span>`; }
+  else { const l = [...oyun.skor.entries()].sort((a, b) => b[1].les - a[1].les), benim = oyun.skor.get(oyun.benId)?.les ?? 0, lider = l.find(([id]) => id !== oyun.benId); sk = `<span class="ben">${kacis(t('hud.sen', { n: benim }))}</span><span>${lider ? kacis(oyun.roster.get(lider[0])?.ad ?? '') + ' ' + lider[1].les : ''}</span><span>${kacis(t('hud.hedef', { n: M.hedef }))}</span>`; }
   if (hudOnce.sk !== sk) { hudOnce.sk = sk; $('skorlar').innerHTML = sk; }
-  if (!ben.canli && oyun.durum === 'oyun') yaz('olum-sayac', `Yeniden doğuş ${Math.max(0, Math.ceil(OYUNCU.dogusBekle - (simdi() - oyun.olumZ)))}`);
-  if (oyun.durum === 'son' && bag?.yerel) yaz('son-sayac', `Yeni maç ${Math.max(0, Math.ceil(oyun.sonBitis - simdi()))} saniye sonra`);
+  if (!ben.canli && oyun.durum === 'oyun') yaz('olum-sayac', t('hud.dogus', { n: Math.max(0, Math.ceil(OYUNCU.dogusBekle - (simdi() - oyun.olumZ))) }));
+  if (oyun.durum === 'son' && bag?.yerel) yaz('son-sayac', t('son.sayac', { n: Math.max(0, Math.ceil(oyun.sonBitis - simdi())) }));
   $('skor-tablo').hidden = !skorGoster || oyun.durum === 'son';
   if (skorGoster) skorTablo();
   etiketler();
@@ -463,7 +470,7 @@ function skorTablo() {
   const l = [...oyun.roster.entries()].map(([id, r]) => ({ id, r, s: oyun.skor.get(id) ?? { les: 0, olum: 0 } })).sort((a, b) => (oyun.takimli ? a.r.takim - b.r.takim : 0) || b.s.les - a.s.les || a.s.olum - b.s.olum);
   const html = l.map(({ id, r, s }) => `<tr class="${id === oyun.benId ? 'ben ' : ''}${oyun.takimli ? (r.takim === 0 ? 'mavi' : 'kirmizi') : ''}"><td>${kacis(r.ad)}${r.bot ? '<span class="bot">BOT</span>' : ''}</td><td>${s.les}</td><td>${s.olum}</td></tr>`).join('');
   if (hudOnce.tablo !== html) { hudOnce.tablo = html; $('skor-satir').innerHTML = html; }
-  yaz('skor-baslik', `${MODLAR[oyun.mod].ad.toLocaleUpperCase('tr')} · ${bag?.yerel ? 'BOTLAR ' + ZORLUK[oyun.yerelZorluk]?.ad.toLocaleUpperCase('tr') : 'ÇEVRİM İÇİ'}`);
+  yaz('skor-baslik', `${buyuk(modAd(oyun.mod))} · ${bag?.yerel ? t('skor.botlar', { z: buyuk(zorlukAd(oyun.yerelZorluk)) }) : t('cevrimici.baslik')}`);
 }
 const kacis = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const etiketDiv = new Map();
@@ -517,7 +524,7 @@ function lobiBaglan() {
     const odadaydi = !!odaDurum || (oyun && bag === b);
     lobiAcik = false; lobiBag = null;
     if (oyun && bag === b) oyunKapat();
-    if (odadaydi) { odaDurum = null; beklemeYaz(); toast('Sunucu bağlantısı koptu.'); durumYaz('Bağlantı koptu, yeniden deneniyor…', true); }
+    if (odadaydi) { odaDurum = null; beklemeYaz(); toast(t('hata.koptu')); durumYaz(t('hata.yenidenDeneniyor'), true); }
     lobiYaz();
     setTimeout(lobiBaglan, odadaydi && lobiDeneme === 0 ? 1000 : Math.min(30000, 5000 * ++lobiDeneme));
   });
@@ -527,7 +534,7 @@ function kendiliginden() {
   const kod = kodDuzelt(new URLSearchParams(location.search).get('oda')), o = oturum.al();
   const hedef = kod ?? (o.oda && o.jeton ? o.oda : null); if (!hedef) return;
   const geri = o.oda === hedef && o.jeton;
-  durumYaz(geri ? 'Odaya geri bağlanıyor…' : 'Odaya bağlanıyor…');
+  durumYaz(t(geri ? 'oda.geriBaglaniyor' : 'oda.baglaniyor'));
   lobiBag.gonder({ t: 'katil', kod: hedef, jeton: geri ? o.jeton : undefined, ...kimlik() });
 }
 function lobiIsle(m) { lobiDeneme = 0; lobiListe = m; lobiYaz(); }
@@ -535,33 +542,35 @@ function lobiYaz() {
   $('cevrimici').classList.toggle('kapali', !lobiAcik);
   for (const id of ['hizli', 'oda-kur', 'odaya-katil']) $(id).disabled = !lobiAcik;
   if (!lobiAcik) { $('kod-satir').hidden = true; $('odaya-katil').setAttribute('aria-expanded', 'false'); }
-  $('cevrimici-sayi').hidden = !lobiAcik; $('cevrimici-sayi').textContent = `● ${lobiListe.cevrimici ?? 0} çevrim içi`;
+  $('cevrimici-sayi').hidden = !lobiAcik; $('cevrimici-sayi').textContent = t('cevrimici.sayi', { n: lobiListe.cevrimici ?? 0 });
   $('acik-odalar').hidden = !lobiAcik;
   const l = lobiListe.odalar ?? [];
   $('oda-sayi').textContent = String(lobiListe.toplam ?? l.length);
   const k = $('odalar'); k.innerHTML = '';
-  if (!l.length) { k.innerHTML = '<div class="bos">Şu an açık oda yok. Hızlı katıl yeni bir oda kurar.</div>'; return; }
+  if (!l.length) { k.innerHTML = `<div class="bos">${t('oda.bos')}</div>`; return; }
   for (const o of l) {
     const dolu = o.insan >= o.kisi, e = document.createElement('button'); e.className = 'oda'; e.disabled = dolu;
-    e.innerHTML = `<span><b></b><br><small>${MODLAR[o.mod]?.ad ?? ''} · ${ZORLUK[o.zorluk]?.ad ?? ''} botlar · ${o.insan}/${o.kisi} oyuncu</small></span><span class="sag"><i class="durum${o.durum === 'mac' ? ' mac' : ''}">${o.durum === 'mac' ? 'MAÇTA' : 'LOBİDE'}</i><em>${dolu ? 'DOLU' : 'KATIL →'}</em></span>`;
+    e.innerHTML = `<span><b></b><br><small>${t('oda.satir', { mod: MODLAR[o.mod] ? modAd(o.mod) : '', zorluk: ZORLUK[o.zorluk] ? zorlukAd(o.zorluk) : '', insan: o.insan, kisi: o.kisi })}</small></span><span class="sag"><i class="durum${o.durum === 'mac' ? ' mac' : ''}">${t(o.durum === 'mac' ? 'oda.macta' : 'oda.lobide')}</i><em>${t(dolu ? 'oda.dolu' : 'oda.gir')}</em></span>`;
     e.querySelector('b').textContent = o.kuran;
     e.onclick = () => koduylaKatil(o.kod);
     k.append(e);
   }
 }
-function koduylaKatil(kod) { if (!lobiAcik) return; durumYaz('Odaya bağlanıyor…'); lobiBag.gonder({ t: 'katil', kod, ...kimlik() }); }
-$('hizli').onclick = () => { if (!lobiAcik) return; durumYaz('Oda aranıyor…'); lobiBag.gonder({ t: 'hizli', mod: secim.mod, zorluk: secim.zorluk, ...kimlik() }); };
-$('oda-kur').onclick = () => { if (!lobiAcik) return; durumYaz('Oda kuruluyor…'); lobiBag.gonder({ t: 'kur', mod: secim.mod, zorluk: secim.zorluk, ...kimlik() }); };
+function koduylaKatil(kod) { if (!lobiAcik) return; durumYaz(t('oda.baglaniyor')); lobiBag.gonder({ t: 'katil', kod, ...kimlik() }); }
+$('hizli').onclick = () => { if (!lobiAcik) return; durumYaz(t('oda.araniyor')); lobiBag.gonder({ t: 'hizli', mod: secim.mod, zorluk: secim.zorluk, ...kimlik() }); };
+$('oda-kur').onclick = () => { if (!lobiAcik) return; durumYaz(t('oda.kuruluyor')); lobiBag.gonder({ t: 'kur', mod: secim.mod, zorluk: secim.zorluk, ...kimlik() }); };
 $('odaya-katil').onclick = () => { const s = $('kod-satir'); s.hidden = !s.hidden; $('odaya-katil').setAttribute('aria-expanded', String(!s.hidden)); if (!s.hidden) $('kod').focus(); };
 function kodKatil() {
   const kod = kodDuzelt($('kod').value.trim());
-  if (!kod) { durumYaz('Oda kodunu yaz', true); $('kod').focus(); return; }
+  if (!kod) { durumYaz(t('oda.kodYaz'), true); $('kod').focus(); return; }
   $('kod').value = kod; koduylaKatil(kod);
 }
 $('kod-katil').onclick = kodKatil;
 $('kod').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); kodKatil(); } });
-$('kod').addEventListener('input', () => { const e = $('kod'), p = e.selectionStart; e.value = e.value.toLocaleUpperCase('tr').replace(/İ/g, 'I'); try { e.setSelectionRange(p, p); } catch { /* yok */ } });
+$('kod').addEventListener('input', () => { const e = $('kod'), p = e.selectionStart; e.value = e.value.toLocaleUpperCase('tr').replace(/\u0130/g, 'I'); try { e.setSelectionRange(p, p); } catch { /* yok */ } });
 
+/** Sunucunun yolladığı yazı: kod sözlükte varsa çevirisi, yoksa sunucunun Türkçe metni (m). */
+const sunucuYazi = m => (m.kod && ('sunucu.' + m.kod) in DILLER.tr ? t(`sunucu.${m.kod}`) : m.m ?? '');
 /** Sunucudan gelen her mesaj (odada değilken de, çevrim içi maçta da) buradan geçer. */
 function agMesaji(m) {
   switch (m.t) {
@@ -569,7 +578,7 @@ function agMesaji(m) {
     case 'odada': durumYaz(''); oturum.yaz(m.kod, m.jeton); adresOda(m.kod); return;
     case 'oda': odaIsle(m); return;
     case 'hata':
-      durumYaz(m.m, true); toast(m.m);
+      { const y = sunucuYazi(m); durumYaz(y, true); toast(y); }
       if (!odaDurum) { adresOda(null); oturum.sil(); }
       return;
     case 'hosgeldin':
@@ -597,7 +606,7 @@ $('son-lobi').onclick = () => oyunKapat();
 $('bk-kopyala').onclick = async () => {
   if (!odaDurum) return;
   const link = location.origin + location.pathname + '?oda=' + odaDurum.kod, b = $('bk-kopyala');
-  try { await navigator.clipboard.writeText(link); b.textContent = 'Link kopyalandı'; setTimeout(() => { b.textContent = 'Linki kopyala'; }, 2000); }
+  try { await navigator.clipboard.writeText(link); b.textContent = t('bekleme.kopyalandi'); setTimeout(() => { b.textContent = t('bekleme.kopyala'); }, 2000); }
   catch { $('bk-link-yazi').textContent = link; $('bk-link-yazi').hidden = false; }
 };
 for (const [kap, alan] of [['bk-mod', 'mod'], ['bk-zorluk', 'zorluk'], ['bk-ozel', 'ozel']]) {
@@ -617,12 +626,12 @@ function beklemeYaz() {
   const d = odaDurum, goster = !!d && !oyun;
   $('bekleme').hidden = !goster; $('ana').hidden = goster || !!oyun;
   if (!goster) return;
-  const M = MODLAR[d.mod], Z = ZORLUK[d.zorluk], kuranim = d.kuran === d.sen;
-  $('bk-goz').textContent = `ODA · ${M.ad.toLocaleUpperCase('tr')} · ${Z.ad.toLocaleUpperCase('tr')} BOTLAR`;
+  const M = MODLAR[d.mod], kuranim = d.kuran === d.sen;
+  $('bk-goz').textContent = t('bekleme.goz', { mod: buyuk(modAd(d.mod)), zorluk: buyuk(zorlukAd(d.zorluk)) });
   $('bk-kod').textContent = d.kod;
-  $('bk-gorunur').textContent = d.ozel ? 'ÖZEL ODA · yalnız kodla' : 'AÇIK ODA · listede görünür';
+  $('bk-gorunur').textContent = t(d.ozel ? 'bekleme.ozelOda' : 'bekleme.acikOda');
   const kap = $('bk-koltuklar'); kap.innerHTML = ''; kap.classList.toggle('tek', !M.takimli);
-  const sutunlar = M.takimli ? [0, 1].map(t => ({ ad: TAKIM_AD[t].toLocaleUpperCase('tr'), cls: t ? 'kirmizi' : 'mavi', l: [0, 1, 2, 3].map(i => i + t * 4) })) : [{ ad: 'KOLTUKLAR', cls: '', l: [0, 1, 2, 3, 4, 5, 6, 7] }];
+  const sutunlar = M.takimli ? [0, 1].map(tk => ({ ad: buyuk(takimAd(tk)), cls: tk ? 'kirmizi' : 'mavi', l: [0, 1, 2, 3].map(i => i + tk * 4) })) : [{ ad: t('bekleme.koltuklar'), cls: '', l: [0, 1, 2, 3, 4, 5, 6, 7] }];
   for (const s of sutunlar) {
     const sut = document.createElement('div'); sut.className = 'bk-sutun ' + s.cls; sut.innerHTML = `<span class="eyebrow">${s.ad}</span>`;
     for (const i of s.l) {
@@ -631,12 +640,12 @@ function beklemeYaz() {
       if (k) {
         e.innerHTML = '<span class="ad"></span><span class="etiketler"></span>'; e.querySelector('.ad').textContent = k.ad;
         const et = e.querySelector('.etiketler');
-        for (const [var_, ad] of [[i === d.kuran, 'kuran'], [i === d.sen, 'sen'], [!!k.koptu, 'koptu']]) if (var_) { const t = document.createElement('i'); t.className = 'etiket-k ' + ad; t.textContent = ad; et.append(t); }
+        for (const [var_, ad] of [[i === d.kuran, 'kuran'], [i === d.sen, 'sen'], [!!k.koptu, 'koptu']]) if (var_) { const el = document.createElement('i'); el.className = 'etiket-k ' + ad; el.textContent = t(`bekleme.${ad}`); et.append(el); }
         if (kuranim) {
-          e.draggable = true; e.title = 'Sürükle ya da tıkla, sonra koltuğa tıkla';
+          e.draggable = true; e.title = t('bekleme.surukle');
           e.addEventListener('dragstart', ev => { surukle = i; ev.dataTransfer.effectAllowed = 'move'; try { ev.dataTransfer.setData('text/plain', String(i)); } catch { /* yok */ } });
         } else e.tabIndex = -1;
-      } else e.innerHTML = '<span class="b1">Bot · boş koltuk</span><span class="b2">Buraya otur</span>';
+      } else e.innerHTML = `<span class="b1">${t('bekleme.bosKoltuk')}</span><span class="b2">${t('bekleme.otur')}</span>`;
       e.onclick = () => koltukTikla(i);
       if (kuranim) {
         e.addEventListener('dragover', ev => { if (surukle != null) { ev.preventDefault(); e.classList.add('uzerinde'); } });
@@ -648,12 +657,12 @@ function beklemeYaz() {
     }
     kap.append(sut);
   }
-  $('bk-ipucu').textContent = kuranim && seciliKoltuk != null ? 'Taşınacak koltuğa tıkla' : '';
+  $('bk-ipucu').textContent = kuranim && seciliKoltuk != null ? t('bekleme.tasi') : '';
   for (const [kp, v] of [['bk-mod', d.mod], ['bk-zorluk', d.zorluk], ['bk-ozel', String(d.ozel ? 1 : 0)]]) for (const b of $(kp).children) { b.classList.toggle('secili', b.dataset.v === v); b.disabled = !kuranim; }
   const insan = d.koltuklar.filter(Boolean).length;
-  $('bk-bilgi').textContent = `${insan} insan · ${d.koltuklar.length - insan} bot · ${M.takimli ? 'Mavi–Kırmızı, ' : ''}${M.hedef} leşte biter`;
+  $('bk-bilgi').textContent = t('bekleme.bilgi', { insan, bot: d.koltuklar.length - insan, takimli: M.takimli, hedef: M.hedef });
   const bs = $('bk-basla'); bs.disabled = !kuranim;
-  bs.innerHTML = kuranim ? 'MAÇI BAŞLAT <span>↗</span>' : 'Kuranın başlatması bekleniyor';
+  bs.innerHTML = kuranim ? t('bekleme.basla') : t('bekleme.kuranBekleniyor');
 }
 
 // ——— Döngü ———
@@ -684,7 +693,7 @@ anaEkranKur();
 demoBaslat();
 lobiBaglan();
 lobiYaz();
-if (PARAM.has('oda') && !PARAM.has('cevrimdisi')) durumYaz('Odaya bağlanıyor…');
+if (PARAM.has('oda') && !PARAM.has('cevrimdisi')) durumYaz(t('oda.baglaniyor'));
 requestAnimationFrame(dongu);
 // Test ve otomatik oynatma için: ?otomatik=1 botlu oyunu hemen başlatır.
 if (PARAM.has('otomatik')) oyunBaslat(yerelBaglanti({ mod: PARAM.get('mod') ?? secim.mod, zorluk: secim.zorluk, harita: PARAM.get('harita') ?? secim.harita, ad: secim.ad, avatar: avatarim() }));

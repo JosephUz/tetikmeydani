@@ -52,7 +52,7 @@ function savas(mac, b, h, g, dt, Z) {
   const bz = b.bz, z = mac.z;
   const dx = h.x - b.x, dz = h.z - b.z, yatay = Math.hypot(dx, dz), u = Math.hypot(dx, h.y - b.y, dz);
   // Silah: yakında pompalı (çok yakında bazen kılıç), ortada tüfek, uzakta keskin; roket varsa orta mesafede roket.
-  let s = u < 2.2 && mac.r() < 0.02 ? SILAH_NO.kilic : u < 8 ? SILAH_NO.pompali : u < 34 || Z.ad === 'Kolay' ? SILAH_NO.tufek : SILAH_NO.keskin;
+  let s = u < 2.2 && mac.r() < 0.02 ? SILAH_NO.kilic : u < 8 ? SILAH_NO.pompali : u < 34 || Z.id === 'kolay' ? SILAH_NO.tufek : SILAH_NO.keskin;
   if (b.cephane > 0 && u > 7 && u < 45) s = SILAH_NO.roket;
   if (bz.silahIstek !== s && z - bz.degisZ > 0.8) { bz.silahIstek = s; bz.degisZ = z; }
   s = bz.silahIstek ?? s;
@@ -63,7 +63,7 @@ function savas(mac, b, h, g, dt, Z) {
   }
   const S = SILAHLAR[b.silah];
   // Nişan: gövde ortası (zorda bazen kafa), hareket eden hedefe biraz önden; sapma 0,4 sn'de bir yenilenir.
-  if (z - bz.sapmaZ > 0.4) { bz.sapmaZ = z; const m = Z.sapma * (1 + Math.min(1.5, Math.hypot(h.vx || 0, h.vz || 0) / 8)); bz.sapma = [(mac.r() - 0.5) * 2 * m, (mac.r() - 0.5) * 2 * m]; bz.kafa = Z.ad === 'Zor' && mac.r() < 0.35; }
+  if (z - bz.sapmaZ > 0.4) { bz.sapmaZ = z; const m = Z.sapma * (1 + Math.min(1.5, Math.hypot(h.vx || 0, h.vz || 0) / 8)); bz.sapma = [(mac.r() - 0.5) * 2 * m, (mac.r() - 0.5) * 2 * m]; bz.kafa = Z.id === 'zor' && mac.r() < 0.35; }
   const on = S.mermi ? u / S.mermi.hiz : S.yakin ? 0 : 0.06;
   const hx = h.x + (h.vx || 0) * on, hz = h.z + (h.vz || 0) * on, hy = h.y + (bz.kafa ? 1.62 : 1.05) - (S.mermi ? 0.8 : 0);
   const ix = hx - b.x, iy = hy - (b.y + OYUNCU.goz), iz = hz - b.z;

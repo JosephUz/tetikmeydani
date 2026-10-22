@@ -11,17 +11,17 @@ export const OYUNCU = {
 
 /** Silahlar: sıra = tuş (1–4); roketatar yerden alınır (5). Hasar tek mermi; pompalıda saçma başına. */
 export const SILAHLAR = [
-  { id: 'tufek', ad: 'Tüfek', tus: '1', hasar: 12, kafa: 2, aralik: 0.095, sarjor: 30, doldur: 1.5, sacilma: 0.012, nisanSacilma: 0.004, nisanFov: 55, menzil: 180, otomatik: true, dusus: [40, 90, 0.6] },
-  { id: 'keskin', ad: 'Keskin', tus: '2', hasar: 80, kafa: 2.5, aralik: 1.05, sarjor: 5, doldur: 2.1, sacilma: 0.07, nisanSacilma: 0, nisanFov: 22, menzil: 400, otomatik: false },
-  { id: 'pompali', ad: 'Pompalı', tus: '3', hasar: 9, kafa: 1.5, sacma: 8, aralik: 0.85, sarjor: 6, doldur: 1.9, sacilma: 0.075, nisanSacilma: 0.055, nisanFov: 65, menzil: 60, otomatik: false, dusus: [9, 26, 0.25] },
-  { id: 'kilic', ad: 'Kılıç', tus: '4', hasar: 65, kafa: 1, aralik: 0.55, sarjor: 0, menzil: 2.9, aci: 0.8, otomatik: true, yakin: true },
-  { id: 'roket', ad: 'Roketatar', tus: '5', hasar: 115, kafa: 1, aralik: 0.9, sarjor: 1, doldur: 0, sacilma: 0, nisanSacilma: 0, nisanFov: 65, menzil: 300, otomatik: false, mermi: { hiz: 34, alan: 4.2, itme: 15, kendi: 0.35 }, cephane: 3 },
+  { id: 'tufek', tus: '1', hasar: 12, kafa: 2, aralik: 0.095, sarjor: 30, doldur: 1.5, sacilma: 0.012, nisanSacilma: 0.004, nisanFov: 55, menzil: 180, otomatik: true, dusus: [40, 90, 0.6] },
+  { id: 'keskin', tus: '2', hasar: 80, kafa: 2.5, aralik: 1.05, sarjor: 5, doldur: 2.1, sacilma: 0.07, nisanSacilma: 0, nisanFov: 22, menzil: 400, otomatik: false },
+  { id: 'pompali', tus: '3', hasar: 9, kafa: 1.5, sacma: 8, aralik: 0.85, sarjor: 6, doldur: 1.9, sacilma: 0.075, nisanSacilma: 0.055, nisanFov: 65, menzil: 60, otomatik: false, dusus: [9, 26, 0.25] },
+  { id: 'kilic', tus: '4', hasar: 65, kafa: 1, aralik: 0.55, sarjor: 0, menzil: 2.9, aci: 0.8, otomatik: true, yakin: true },
+  { id: 'roket', tus: '5', hasar: 115, kafa: 1, aralik: 0.9, sarjor: 1, doldur: 0, sacilma: 0, nisanSacilma: 0, nisanFov: 65, menzil: 300, otomatik: false, mermi: { hiz: 34, alan: 4.2, itme: 15, kendi: 0.35 }, cephane: 3 },
 ];
 export const SILAH_NO = Object.fromEntries(SILAHLAR.map((s, i) => [s.id, i]));
 
 export const MODLAR = {
-  herkes: { ad: 'Herkes Herkese', kisa: 'HERKES', takimli: false, hedef: 25, sure: 360, kisi: 8 },
-  takim: { ad: 'Takım Çatışması', kisa: 'TAKIM', takimli: true, hedef: 40, sure: 480, kisi: 8 },
+  herkes: { kisa: 'HERKES', takimli: false, hedef: 25, sure: 360, kisi: 8 },
+  takim: { kisa: 'TAKIM', takimli: true, hedef: 40, sure: 480, kisi: 8 },
 };
 
 /**
@@ -29,11 +29,10 @@ export const MODLAR = {
  * ates: silah aralığının katı (botlar insandan yavaş tetik çeker), titreme: her atışta sapmanın bu katı kadar rastgele kayma.
  */
 export const ZORLUK = {
-  kolay: { ad: 'Kolay', tepki: 0.8, donus: 3.2, sapma: 0.08, esik: 0.09, hareket: 0.55, ates: 2.4, titreme: 0.9 },
-  orta: { ad: 'Orta', tepki: 0.5, donus: 5.5, sapma: 0.05, esik: 0.06, hareket: 0.8, ates: 1.8, titreme: 0.8 },
-  zor: { ad: 'Zor', tepki: 0.28, donus: 9, sapma: 0.028, esik: 0.04, hareket: 1, ates: 1.3, titreme: 0.7 },
+  kolay: { id: 'kolay', tepki: 0.8, donus: 3.2, sapma: 0.08, esik: 0.09, hareket: 0.55, ates: 2.4, titreme: 0.9 },
+  orta: { id: 'orta', tepki: 0.5, donus: 5.5, sapma: 0.05, esik: 0.06, hareket: 0.8, ates: 1.8, titreme: 0.8 },
+  zor: { id: 'zor', tepki: 0.28, donus: 9, sapma: 0.028, esik: 0.04, hareket: 1, ates: 1.3, titreme: 0.7 },
 };
 
 export const MAC = { tik: 30, sonBekle: 10, canPaketi: 50, canDogus: 18, roketDogus: 35 };
 export const TAKIM_RENK = ['#3d8bd6', '#c7442f'];
-export const TAKIM_AD = ['Mavi', 'Kırmızı'];

@@ -40,7 +40,7 @@ test('oda kur: kuran bekleme odasında, ayarlar ana ekrandan; kodla katılma (ti
   const db = b.son('oda'); assert.notEqual(db.sen, db.kuran); assert.equal(db.koltuklar[db.sen].ad, 'Bora');
   // takımlıda ikinci insan öbür takıma oturur
   assert.ok((d.sen < 4) !== (db.sen < 4));
-  const c = yeni(); c.yolla({ t: 'katil', kod: 'ZZZZ-9', ad: 'C' }); assert.equal(c.son('hata').m, 'Böyle bir oda yok');
+  const c = yeni(); c.yolla({ t: 'katil', kod: 'ZZZZ-9', ad: 'C' }); assert.equal(c.son('hata').m, 'Böyle bir oda yok'); assert.equal(c.son('hata').kod, 'oda.yok');
   r.kapat();
 });
 
@@ -63,7 +63,7 @@ test('hızlı katıl: açık odaya oturur, yoksa yeni açık oda kurar; dolu oda
   const a = yeni(); a.yolla({ t: 'hizli', ad: 'A', avatar: AV, mod: 'herkes', zorluk: 'kolay' });
   const kod = a.son('odada').kod; assert.equal(a.son('oda').kuran, a.son('oda').sen, 'yeni oda kurdu, kuran oldu');
   const ws = [a]; for (let i = 1; i < KOLTUK; i++) { const w = yeni(); w.yolla({ t: 'hizli', ad: 'O' + i, avatar: AV }); assert.equal(w.son('odada').kod, kod); ws.push(w); }
-  const dolu = yeni(); dolu.yolla({ t: 'katil', kod, ad: 'X' }); assert.equal(dolu.son('hata').m, 'Oda dolu');
+  const dolu = yeni(); dolu.yolla({ t: 'katil', kod, ad: 'X' }); assert.equal(dolu.son('hata').m, 'Oda dolu'); assert.equal(dolu.son('hata').kod, 'oda.dolu');
   dolu.yolla({ t: 'hizli', ad: 'X', avatar: AV }); assert.notEqual(dolu.son('odada').kod, kod, 'dolu odaya değil yenisine');
   // özel odaya hızlı katılla girilmez
   const { r: r2, yeni: yeni2 } = kurulum();

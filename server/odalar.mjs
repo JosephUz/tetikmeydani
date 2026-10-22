@@ -93,7 +93,7 @@ export function createRooms({ log = () => {}, zamanlayici = true, lobiGecikme = 
     }
     if (!geri) {
       i = bosKoltuk(oda);
-      if (i < 0) { b.yolla(JSON.stringify({ t: 'hata', m: 'Oda dolu' })); return false; }
+      if (i < 0) { b.yolla(JSON.stringify({ t: 'hata', kod: 'oda.dolu', m: 'Oda dolu' })); return false; }
       oda.koltuklar[i] = { ad: adDuzelt(m.ad) || 'Oyuncu-' + Math.floor(1000 + Math.random() * 9000), avatar: avatarDuzelt(m.avatar), jeton: randomBytes(12).toString('hex'), bag: null, koptu: false, kopZ: 0, id: null };
     }
     const s = oda.koltuklar[i];
@@ -211,7 +211,7 @@ export function createRooms({ log = () => {}, zamanlayici = true, lobiGecikme = 
         else if (m.t === 'kur') gir(b, odaKur(m), m);
         else if (m.t === 'katil') {
           const kod = kodDuzelt(m.kod), oda = kod && odalar.get(kod);
-          if (oda) gir(b, oda, m); else b.yolla(JSON.stringify({ t: 'hata', m: 'Böyle bir oda yok', kod: 1 }));
+          if (oda) gir(b, oda, m); else b.yolla(JSON.stringify({ t: 'hata', kod: 'oda.yok', m: 'Böyle bir oda yok' }));
         } else if (m.t === 'hizli') {
           const uygun = [...odalar.values()].filter(o => !o.ozel && bosVar(o))
             .sort((a, c) => (a.durum === 'lobi' ? 0 : 1) - (c.durum === 'lobi' ? 0 : 1) || doluSayi(c) - doluSayi(a))[0];

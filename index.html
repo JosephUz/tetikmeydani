@@ -2,51 +2,51 @@
 <html lang="tr">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#15191c"><title>Tetik Meydanı · Zıpla. Nişan al. Meydanı tut.</title>
-  <meta name="description" content="Juland'ın kutu karakterleriyle tarayıcıda hızlı arena atış oyunu: çift zıplama, koşu, tüfek, keskin, pompalı, kılıç ve roketatar. Botlarla ya da çevrim içi.">
+  <meta name="theme-color" content="#15191c"><title data-i18n="sayfa.baslik">Tetik Meydanı · Zıpla. Nişan al. Meydanı tut.</title>
+  <meta name="description" data-i18n-content="sayfa.aciklama" content="Juland'ın kutu karakterleriyle tarayıcıda hızlı arena atış oyunu: çift zıplama, koşu, tüfek, keskin, pompalı, kılıç ve roketatar. Botlarla ya da çevrim içi.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2315191c'/%3E%3Ccircle cx='32' cy='32' r='15' fill='none' stroke='%23e2b25a' stroke-width='4'/%3E%3Cpath d='M32 6v14M32 44v14M6 32h14M44 32h14' stroke='%23e2b25a' stroke-width='4'/%3E%3Ccircle cx='32' cy='32' r='3' fill='%23d9573f'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="./style.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
 </head>
 <body>
 <div id="app">
-  <canvas id="sahne" aria-label="Tetik Meydanı oyun alanı"></canvas>
+  <canvas id="sahne" aria-label="Tetik Meydanı oyun alanı" data-i18n-aria-label="sayfa.sahne"></canvas>
   <div id="etiketler" aria-hidden="true"></div>
   <div id="vinyet"></div>
 
   <header id="header">
-    <a class="brand" href="#" id="brand" aria-label="Tetik Meydanı"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="9" fill="none" stroke-width="2.6"/><path d="M20 3v9M20 28v9M3 20h9M28 20h9" stroke-width="2.6"/><circle cx="20" cy="20" r="2" class="nokta"/></svg><span>TETİK MEYDANI<small>ZIPLA. NİŞAN AL. MEYDANI TUT.</small></span></a>
-    <!-- STANDART üst araç çubuğu (bütün JosephUz oyunlarında aynı sıra, aynı yazılar): ← josephuz.com · Ses · Kontroller F1.
+    <a class="brand" href="#" id="brand" aria-label="Tetik Meydanı"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="9" fill="none" stroke-width="2.6"/><path d="M20 3v9M20 28v9M3 20h9M28 20h9" stroke-width="2.6"/><circle cx="20" cy="20" r="2" class="nokta"/></svg><span>TETİK MEYDANI<small data-i18n="marka.alt">ZIPLA. NİŞAN AL. MEYDANI TUT.</small></span></a>
+    <!-- STANDART üst araç çubuğu (bütün JosephUz oyunlarında aynı sıra, aynı yazılar): ← josephuz.com · Ses · Kontroller F1 · Dil (EN/TR).
          Tetik Meydanı'nın müziği yok, Müzik düğmesi de yok. -->
-    <div class="top-actions" id="toptools"><a id="homeLink" class="subtle" href="https://www.josephuz.com/">← <span class="site-name">josephuz.com</span></a><button id="sound" class="subtle" title="Ses efektlerini aç/kapat">Ses: açık</button><button id="help" class="subtle" title="Kontroller (F1)">Kontroller <kbd>F1</kbd></button></div>
+    <div class="top-actions" id="toptools"><a id="homeLink" class="subtle" href="https://www.josephuz.com/">← <span class="site-name">josephuz.com</span></a><button id="sound" class="subtle" title="Ses efektlerini aç/kapat" data-i18n-title="ust.ses.title"></button><button id="help" class="subtle" title="Kontroller (F1)" data-i18n-title="ust.kontroller.title" data-i18n-html="ust.kontroller"></button><button id="dil" class="subtle"></button></div>
   </header>
 
   <section id="ana">
     <div class="ana-metin">
-      <p class="eyebrow"><span class="dash"></span> JULAND'IN KARAKTERLERİ · ARENA ATIŞI</p>
-      <h1>Meydanda son sözü<br><em>tetik söyler.</em></h1>
-      <p class="intro">Dış mahallede ev ev çatış, camdan ateş et, karakoldan depoya koş.<br>Roketatar kalpazan evinin önünde. Önce kim varacak?</p>
+      <p class="eyebrow" data-i18n-html="ana.ust"></p>
+      <h1 data-i18n-html="ana.baslik"></h1>
+      <p class="intro" data-i18n-html="ana.giris"></p>
       <div class="secim">
-        <label class="ad-alan"><span class="eyebrow">ADIN</span><input id="ad" maxlength="16" autocomplete="nickname" spellcheck="false"></label>
-        <span class="eyebrow karakter-baslik">KARAKTERİN</span>
-        <div id="karakterler" role="radiogroup" aria-label="Karakter"></div>
+        <label class="ad-alan"><span class="eyebrow" data-i18n="ana.adin">ADIN</span><input id="ad" maxlength="16" autocomplete="nickname" spellcheck="false"></label>
+        <span class="eyebrow karakter-baslik" data-i18n="ana.karakterin">KARAKTERİN</span>
+        <div id="karakterler" role="radiogroup" aria-label="Karakter" data-i18n-aria-label="ana.karakter"></div>
       </div>
       <div class="secim satir">
-        <div><span class="eyebrow">MOD</span><div class="dilim" id="mod"><button data-v="herkes" class="secili">Herkes Herkese</button><button data-v="takim">Takım Çatışması</button></div></div>
-        <div><span class="eyebrow">BOTLAR</span><div class="dilim" id="zorluk"><button data-v="kolay">Kolay</button><button data-v="orta" class="secili">Orta</button><button data-v="zor">Zor</button></div></div>
+        <div><span class="eyebrow" data-i18n="ana.mod">MOD</span><div class="dilim" id="mod"><button data-v="herkes" class="secili" data-i18n="mod.herkes">Herkes Herkese</button><button data-v="takim" data-i18n="mod.takim">Takım Çatışması</button></div></div>
+        <div><span class="eyebrow" data-i18n="ana.botlar">BOTLAR</span><div class="dilim" id="zorluk"><button data-v="kolay" data-i18n="zorluk.kolay">Kolay</button><button data-v="orta" class="secili" data-i18n="zorluk.orta">Orta</button><button data-v="zor" data-i18n="zorluk.zor">Zor</button></div></div>
       </div>
-      <div class="ana-dugmeler"><button id="oyna" class="primary">TEK BAŞINA <span>↗</span></button></div>
-      <p id="dokunmatik-uyari" hidden>Tetik Meydanı klavye ve fareyle oynanır. Bilgisayardan aç.</p>
+      <div class="ana-dugmeler"><button id="oyna" class="primary" data-i18n-html="ana.tek"></button></div>
+      <p id="dokunmatik-uyari" hidden data-i18n="ana.dokunmatik">Tetik Meydanı klavye ve fareyle oynanır. Bilgisayardan aç.</p>
       <div id="cevrimici" class="cevrimici kapali">
-        <div class="cb-baslik"><span class="eyebrow">ÇEVRİM İÇİ</span><span id="cevrimici-sayi" class="cb-sayi" hidden>● 0 çevrim içi</span></div>
-        <div class="cb-dugmeler"><button id="hizli" class="primary" disabled>HIZLI KATIL <span>→</span><i class="yakinda">YAKINDA</i></button><button id="oda-kur" class="outline" disabled>ODA KUR<i class="yakinda">YAKINDA</i></button><button id="odaya-katil" class="outline" disabled aria-expanded="false">ODAYA KATIL<i class="yakinda">YAKINDA</i></button></div>
-        <div id="kod-satir" class="kod-satir" hidden><label><span class="eyebrow">ODA KODU</span><input id="kod" maxlength="6" autocomplete="off" spellcheck="false" placeholder="KPRT-4"></label><button id="kod-katil" class="outline">KATIL</button></div>
+        <div class="cb-baslik"><span class="eyebrow" data-i18n="cevrimici.baslik">ÇEVRİM İÇİ</span><span id="cevrimici-sayi" class="cb-sayi" hidden></span></div>
+        <div class="cb-dugmeler"><button id="hizli" class="primary" disabled data-i18n-html="oda.hizli"></button><button id="oda-kur" class="outline" disabled data-i18n-html="oda.kur"></button><button id="odaya-katil" class="outline" disabled aria-expanded="false" data-i18n-html="oda.katil"></button></div>
+        <div id="kod-satir" class="kod-satir" hidden><label><span class="eyebrow" data-i18n="oda.kodu">ODA KODU</span><input id="kod" maxlength="6" autocomplete="off" spellcheck="false" placeholder="KPRT-4"></label><button id="kod-katil" class="outline" data-i18n="oda.kodKatil">KATIL</button></div>
         <p id="cevrimici-durum" class="cb-durum" role="status"></p>
-        <div id="acik-odalar" hidden><span class="eyebrow">AÇIK ODALAR <b id="oda-sayi">0</b></span><div id="odalar"></div></div>
+        <div id="acik-odalar" hidden><span class="eyebrow"><span data-i18n="oda.acikOdalar">AÇIK ODALAR</span> <b id="oda-sayi">0</b></span><div id="odalar"></div></div>
       </div>
     </div>
-    <div class="sahne-yazi"><span class="eyebrow" id="sahne-baslik">MEYDAN</span><p id="sahne-metin">Dört bina, dört köprü, bir kule.</p><small id="sahne-esin"></small><small>8 KOLTUK · BOTLAR BOŞ KOLTUKLARI DOLDURUR</small></div>
-    <footer>JOSEPHUZ OYUNLARI <span>ARENA ATIŞI · TARAYICIDA</span></footer>
+    <div class="sahne-yazi"><span class="eyebrow" id="sahne-baslik"></span><p id="sahne-metin"></p><small id="sahne-esin"></small><small data-i18n="ana.koltuk">8 KOLTUK · BOTLAR BOŞ KOLTUKLARI DOLDURUR</small></div>
+    <footer data-i18n-html="ana.alt"></footer>
   </section>
 
   <div id="oyun-ui" hidden>
@@ -57,38 +57,38 @@
     <div id="yara-yon"></div>
     <div id="durbun" hidden></div>
     <div id="mesaj"></div>
-    <div id="can-kutu" class="panel"><span class="eyebrow">CAN</span><b id="can">100</b><div class="meter"><i id="can-bar"></i></div><div id="yetenekler"><span id="y-cift" title="Havada ikinci zıplama">⇡ ÇİFT</span></div></div>
-    <div id="cephane-kutu" class="panel"><span class="eyebrow" id="silah-ad">TÜFEK</span><b id="cephane">30</b><small id="cephane-yedek">/ ∞</small><div class="meter"><i id="doldur-bar"></i></div><div id="silahlar"></div></div>
-    <div id="olum" hidden><span class="eyebrow">DÜŞTÜN</span><h2 id="olum-baslik"></h2><p id="olum-sayac"></p></div>
-    <div id="skor-tablo" class="panel" hidden><span class="eyebrow" id="skor-baslik">SKOR</span><table><thead><tr><th>Oyuncu</th><th>Leş</th><th>Ölüm</th></tr></thead><tbody id="skor-satir"></tbody></table></div>
-    <div id="son" class="panel" hidden><span class="eyebrow">MAÇ BİTTİ</span><h2 id="son-baslik"></h2><table><thead><tr><th>#</th><th>Oyuncu</th><th>Leş</th><th>Ölüm</th></tr></thead><tbody id="son-satir"></tbody></table><p id="son-sayac"></p><button id="son-lobi" class="primary" hidden>LOBİYE DÖN <span>→</span></button></div>
-    <button id="kilit" class="panel" hidden>Oynamak için tıkla</button>
+    <div id="can-kutu" class="panel"><span class="eyebrow" data-i18n="hud.can">CAN</span><b id="can">100</b><div class="meter"><i id="can-bar"></i></div><div id="yetenekler"><span id="y-cift" title="Havada ikinci zıplama" data-i18n-title="hud.cift.title" data-i18n="hud.cift">⇡ ÇİFT</span></div></div>
+    <div id="cephane-kutu" class="panel"><span class="eyebrow" id="silah-ad"></span><b id="cephane">30</b><small id="cephane-yedek">/ ∞</small><div class="meter"><i id="doldur-bar"></i></div><div id="silahlar"></div></div>
+    <div id="olum" hidden><span class="eyebrow" data-i18n="olum.dustun">DÜŞTÜN</span><h2 id="olum-baslik"></h2><p id="olum-sayac"></p></div>
+    <div id="skor-tablo" class="panel" hidden><span class="eyebrow" id="skor-baslik" data-i18n="skor.baslik">SKOR</span><table><thead><tr><th data-i18n="skor.oyuncu">Oyuncu</th><th data-i18n="skor.les">Leş</th><th data-i18n="skor.olum">Ölüm</th></tr></thead><tbody id="skor-satir"></tbody></table></div>
+    <div id="son" class="panel" hidden><span class="eyebrow" data-i18n="son.bitti">MAÇ BİTTİ</span><h2 id="son-baslik"></h2><table><thead><tr><th>#</th><th data-i18n="skor.oyuncu">Oyuncu</th><th data-i18n="skor.les">Leş</th><th data-i18n="skor.olum">Ölüm</th></tr></thead><tbody id="son-satir"></tbody></table><p id="son-sayac"></p><button id="son-lobi" class="primary" hidden data-i18n-html="son.lobi"></button></div>
+    <button id="kilit" class="panel" hidden data-i18n="hud.kilit">Oynamak için tıkla</button>
   </div>
 
   <div id="toast" role="status" aria-live="polite" hidden></div>
 
   <section id="bekleme" hidden aria-labelledby="bk-kod"><div class="bekleme-ic panel">
-    <div class="bk-ust"><div><span class="eyebrow" id="bk-goz">ODA</span><div class="bk-kod" id="bk-kod"></div><span class="bk-gorunur" id="bk-gorunur"></span></div><div class="bk-link"><button id="bk-kopyala" class="outline">Linki kopyala</button><small id="bk-link-yazi" hidden></small></div></div>
+    <div class="bk-ust"><div><span class="eyebrow" id="bk-goz"></span><div class="bk-kod" id="bk-kod"></div><span class="bk-gorunur" id="bk-gorunur"></span></div><div class="bk-link"><button id="bk-kopyala" class="outline" data-i18n="bekleme.kopyala">Linki kopyala</button><small id="bk-link-yazi" hidden></small></div></div>
     <div id="bk-koltuklar"></div>
     <p class="bk-ipucu" id="bk-ipucu"></p>
     <div class="bk-ayar">
-      <div><span class="eyebrow">MOD</span><div class="dilim" id="bk-mod"><button data-v="herkes">Herkes Herkese</button><button data-v="takim">Takım Çatışması</button></div></div>
-      <div><span class="eyebrow">BOT ZORLUĞU</span><div class="dilim" id="bk-zorluk"><button data-v="kolay">Kolay</button><button data-v="orta">Orta</button><button data-v="zor">Zor</button></div></div>
-      <div><span class="eyebrow">ODA</span><div class="dilim" id="bk-ozel"><button data-v="0">Herkese açık</button><button data-v="1">Özel</button></div></div>
+      <div><span class="eyebrow" data-i18n="ana.mod">MOD</span><div class="dilim" id="bk-mod"><button data-v="herkes" data-i18n="mod.herkes">Herkes Herkese</button><button data-v="takim" data-i18n="mod.takim">Takım Çatışması</button></div></div>
+      <div><span class="eyebrow" data-i18n="bekleme.botZorlugu">BOT ZORLUĞU</span><div class="dilim" id="bk-zorluk"><button data-v="kolay" data-i18n="zorluk.kolay">Kolay</button><button data-v="orta" data-i18n="zorluk.orta">Orta</button><button data-v="zor" data-i18n="zorluk.zor">Zor</button></div></div>
+      <div><span class="eyebrow" data-i18n="bekleme.oda">ODA</span><div class="dilim" id="bk-ozel"><button data-v="0" data-i18n="bekleme.acik">Herkese açık</button><button data-v="1" data-i18n="bekleme.ozel">Özel</button></div></div>
     </div>
     <p class="bk-bilgi" id="bk-bilgi"></p>
-    <div class="bk-dugmeler"><button id="bk-cik" class="outline">Odadan çık</button><button id="bk-basla" class="primary">MAÇI BAŞLAT <span>↗</span></button></div>
+    <div class="bk-dugmeler"><button id="bk-cik" class="outline" data-i18n="bekleme.cik">Odadan çık</button><button id="bk-basla" class="primary"></button></div>
   </div></section>
 
-  <dialog id="menu-dialog" aria-labelledby="pause-title"><div class="dialog-inner"><span class="eyebrow" id="menu-ust">BOTLU OYUN DURAKLATILDI</span><h2 id="pause-title">Bir nefes arası.</h2><div class="menu-stack"><button id="resume" class="primary">DEVAM ET →</button><button id="pause-help" class="outline">Kontroller <kbd>F1</kbd></button><button id="pause-sound" class="outline">Ses: açık</button><label class="outline hassas">Fare hassasiyeti <input id="hassasiyet" type="range" min="0.3" max="3" step="0.05" value="1"><output id="hassasiyet-deger">1,00</output></label><button id="back-home" class="outline">Ana menü</button><a class="outline" href="https://www.josephuz.com/">josephuz.com'a dön</a></div></div></dialog>
+  <dialog id="menu-dialog" aria-labelledby="pause-title"><div class="dialog-inner"><span class="eyebrow" id="menu-ust"></span><h2 id="pause-title" data-i18n="menu.baslik">Bir nefes arası.</h2><div class="menu-stack"><button id="resume" class="primary" data-i18n="menu.devam">DEVAM ET →</button><button id="pause-help" class="outline" data-i18n-html="ust.kontroller"></button><button id="pause-sound" class="outline"></button><label class="outline hassas"><span data-i18n="menu.hassasiyet">Fare hassasiyeti</span> <input id="hassasiyet" type="range" min="0.3" max="3" step="0.05" value="1"><output id="hassasiyet-deger">1,00</output></label><button id="back-home" class="outline"></button><a class="outline" href="https://www.josephuz.com/" data-i18n="menu.site">josephuz.com'a dön</a></div></div></dialog>
 
-  <dialog id="help-dialog"><div class="dialog-inner"><button class="close" data-close aria-label="Kapat">×</button><span class="eyebrow">MEYDAN KURALLARI</span><h2>Zıpla. Nişan al.</h2>
-    <p class="controls-title">HAREKET</p><div class="controls"><div><kbd>W A S D</kbd> Yürü</div><div><kbd>SHIFT</kbd> Basılı tut: koş</div><div><kbd>FARE</kbd> Bak</div><div><kbd>SPACE</kbd> Zıpla · havada bir kez daha</div><div><kbd>SARI TAŞ</kbd> Zıplatma: çatıya, kuleye</div><div><kbd>ESC</kbd> Menü</div></div>
-    <p class="controls-title">ATIŞ</p><div class="controls"><div><kbd>SOL TIK</kbd> Ateş</div><div><kbd>SAĞ TIK</kbd> Nişan aç / kapa · keskinde dürbün</div><div><kbd>1 – 5</kbd> Tüfek · Keskin · Pompalı · Kılıç · Roketatar</div><div><kbd>TEKERLEK</kbd> Silah değiştir</div><div><kbd>Q</kbd> Önceki silah</div><div><kbd>R</kbd> Şarjör doldur</div><div><kbd>V</kbd> Kılıçla hızlı vuruş</div><div><kbd>TAB</kbd> Skor tablosu</div><div><kbd>F1</kbd> Kontroller</div></div>
-    <p>Kafaya isabet daha çok can götürür: tüfekte <b>2×</b>, keskinde <b>2,5×</b> (tek atış). Kılıçla arkadan vuruş <b>2×</b>. Roketatar orta kulenin tepesinde, 3 roketle gelir; patlama seni de iter: <b>roketle zıplama</b> mümkün. Can paketleri köprülerin altında. 4,5 saniye vurulmazsan can yenilenir.</p>
-    <button class="primary" data-close>ANLADIM →</button></div></dialog>
+  <dialog id="help-dialog"><div class="dialog-inner"><button class="close" data-close aria-label="Kapat" data-i18n-aria-label="yardim.kapat">×</button><span class="eyebrow" data-i18n="yardim.ust">MEYDAN KURALLARI</span><h2 data-i18n="yardim.baslik">Zıpla. Nişan al.</h2>
+    <p class="controls-title" data-i18n="yardim.hareket">HAREKET</p><div class="controls"><div data-i18n-html="yardim.yuru"></div><div data-i18n-html="yardim.kos"></div><div data-i18n-html="yardim.bak"></div><div data-i18n-html="yardim.zipla"></div><div data-i18n-html="yardim.tas"></div><div data-i18n-html="yardim.menu"></div></div>
+    <p class="controls-title" data-i18n="yardim.atis">ATIŞ</p><div class="controls"><div data-i18n-html="yardim.ates"></div><div data-i18n-html="yardim.nisan"></div><div data-i18n-html="yardim.silahlar"></div><div data-i18n-html="yardim.tekerlek"></div><div data-i18n-html="yardim.onceki"></div><div data-i18n-html="yardim.doldur"></div><div data-i18n-html="yardim.kilic"></div><div data-i18n-html="yardim.tab"></div><div data-i18n-html="yardim.f1"></div></div>
+    <p data-i18n-html="yardim.metin"></p>
+    <button class="primary" data-close data-i18n="yardim.tamam">ANLADIM →</button></div></dialog>
 
-  <div id="fatal" hidden><h2>Oyun açılamadı.</h2><p id="fatal-message"></p><button onclick="location.reload()">Yeniden dene</button></div>
+  <div id="fatal" hidden><h2 data-i18n="hata.baslik">Oyun açılamadı.</h2><p id="fatal-message"></p><button onclick="location.reload()" data-i18n="hata.yeniden">Yeniden dene</button></div>
 </div>
 <script type="module" src="./src/main.js"></script>
 </body></html>
