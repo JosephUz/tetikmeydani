@@ -1,5 +1,11 @@
 # Tetik Meydanı
 
+> **EN:** A fast arena shooter in the browser (Three.js) with Juland's box characters: double jump, sprint, rifles, shotgun, sword and rocket launcher; with bots or in an online room.
+>
+> **TR:** Tarayıcıda (Three.js) Juland'ın kutu karakterleriyle hızlı arena atış oyunu: çift zıplama, koşu, tüfek, pompalı, kılıç, roketatar; botlarla ya da çevrim içi odada.
+
+**Play / Oyna:** https://tetikmeydani.josephuz.com · **Source / Kaynak:** https://github.com/JosephUz/tetikmeydani
+
 Juland'ın kutu karakterleriyle tarayıcıda hızlı arena atış oyunu (ev.io esinli). Çift zıplama, Shift ile koşu;
 tüfek, keskin, pompalı, kılıç ve kalpazan evinin önündeki roketatar. Botlarla tek başına ya da çevrim içi odada oynanır.
 
@@ -60,3 +66,18 @@ Bütün josephuz oyunlarındaki oda standardına uyar (`josephuz/docs/oda-standa
 - İstemci: Cloudflare Worker, `tetikmeydani.josephuz.com` → `npm run deploy:web`
 - Sunucu: Docker + Cloudflare Tunnel, `tetikmeydani-sunucu.josephuz.com` → `docker compose --profile tunnel up -d --build`
   (`.env` içinde `TUNNEL_TOKEN`, paneldeki rota `http://localhost:5210`).
+
+## Lisans / License
+
+- **Kod:** [MIT](LICENSE), Copyright (c) 2026 JosephUz. Kodu kullanabilir, değiştirebilir, dağıtabilirsin.
+- **MIT dışında, tüm hakları saklıdır:** "Tetik Meydanı" ve "JosephUz" adları. Ayrıntı: [TRADEMARKS.md](TRADEMARKS.md).
+- **Fork'lar** başka bir ad ve logo kullanmalı, resmî sürüm olduğunu ima etmemeli.
+- **Üçüncü taraf:** [three.js](https://github.com/mrdoob/three.js) ve [ws](https://github.com/websockets/ws) npm bağımlılığıdır (ikisi de MIT), depoda değil, kendi lisanslarıyla gelir.
+
+> **In English:** The code is licensed under [MIT](LICENSE). The name "Tetik Meydanı", the name "JosephUz" are **not** covered by MIT and are all rights reserved; see [TRADEMARKS.md](TRADEMARKS.md). Forks must use a different name and logo.
+
+## Katkı / Contributing
+
+Hata bildirimi, öneri ve pull request'e açığız. Büyük bir değişiklikten önce bir [issue](https://github.com/JosephUz/tetikmeydani/issues) açıp konuşalım; oyunun dengesi ve yönü JosephUz'da. Kod ve oyun Türkçe: değişken, işlev ve mesaj adları Türkçe, çevresindeki kodun düzenine uy; `npm test` geçmeli. Gönderdiğin katkı bu deponun MIT lisansıyla yayımlanır. Müzik, ses ya da görsel eklemeden önce issue'da sor. Güvenlik açıklarını issue yerine [SECURITY.md](SECURITY.md)'deki yoldan bildir.
+
+> **In English:** Issues and pull requests are welcome; please open an issue before large changes. Contributions are accepted under the MIT license of this repository. Report security issues privately as described in [SECURITY.md](SECURITY.md).
