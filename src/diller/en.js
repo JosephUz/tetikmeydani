@@ -25,7 +25,7 @@ export default {
   'ana.dokunmatik': 'Tetik Meydanı is played with keyboard and mouse. Open it on a computer.',
   'ana.koltuk': '8 SEATS · BOTS FILL EMPTY SEATS',
   'ana.alt': 'JOSEPHUZ GAMES <span>ARENA SHOOTER · IN YOUR BROWSER</span>',
-  'harita.mahalle.slogan': 'A police station, a depot, glass-front houses in between.',
+  'harita.mahalle.slogan': 'Police station to the west, depot to the east, the forger’s house in the middle.',
 
   'mod.herkes': 'Free for All',
   'mod.takim': 'Team Deathmatch',
@@ -141,7 +141,6 @@ export default {
   'yardim.kos': '<kbd>SHIFT</kbd> Hold to sprint',
   'yardim.bak': '<kbd>MOUSE</kbd> Look',
   'yardim.zipla': '<kbd>SPACE</kbd> Jump · once more in mid-air',
-  'yardim.tas': '<kbd>YELLOW PAD</kbd> Jump pad: onto roofs and the tower',
   'yardim.menu': '<kbd>ESC</kbd> Menu',
   'yardim.atis': 'SHOOTING',
   'yardim.ates': '<kbd>LEFT CLICK</kbd> Fire',
@@ -153,6 +152,6 @@ export default {
   'yardim.kilic': '<kbd>V</kbd> Quick sword strike',
   'yardim.tab': '<kbd>TAB</kbd> Scoreboard',
   'yardim.f1': '<kbd>F1</kbd> Controls',
-  'yardim.metin': 'Headshots hurt more: <b>2×</b> with the rifle, <b>2.5×</b> with the sniper (one shot). A sword hit from behind does <b>2×</b>. The rocket launcher sits on top of the central tower with 3 rockets; the blast pushes you too, so <b>rocket jumps</b> work. Health packs are under the bridges. Avoid getting hit for 4.5 seconds and your health regenerates.',
+  'yardim.metin': 'Headshots hurt more: <b>2×</b> with the rifle, <b>2.5×</b> with the sniper (one shot), <b>1.5×</b> with the shotgun. A sword hit from behind does <b>2×</b>. The rocket launcher waits outside the door of the forger’s house in the middle, with 3 rockets; the blast pushes you too, so <b>rocket jumps</b> work. Health packs (+50 health) are on the ground floor of the two-storey brick houses on either side. Avoid getting hit for 4.5 seconds and your health regenerates.',
   'yardim.tamam': 'GOT IT →',
 };

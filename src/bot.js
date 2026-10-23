@@ -1,5 +1,5 @@
 // Bot: görür, tepki süresinden sonra nişan alır (zorluğa göre sapma ve dönüş hızı), mesafeye göre silah seçer;
-// görmezken yol ağında gezer (can azsa can paketine, roket hazırsa kuleye, yoksa son bilinen düşmana ya da rastgele).
+// görmezken yol ağında gezer (can azsa can paketine, roket hazırsa roketatara, yoksa son bilinen düşmana ya da rastgele).
 import { OYUNCU, SILAHLAR, SILAH_NO } from './ayar.js';
 import { hareket, gorur, bakis } from './fizik.js';
 import { yolAgi, yolBul } from './yol.js';

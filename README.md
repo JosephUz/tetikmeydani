@@ -1,7 +1,7 @@
 # Tetik Meydanı
 
-Juland'ın kutu karakterleriyle tarayıcıda hızlı arena atış oyunu (ev.io esinli). Çift zıplama, Shift ile koşu, zıplatma taşları;
-tüfek, keskin, pompalı, kılıç ve kulenin tepesindeki roketatar. Botlarla tek başına ya da çevrim içi odada oynanır.
+Juland'ın kutu karakterleriyle tarayıcıda hızlı arena atış oyunu (ev.io esinli). Çift zıplama, Shift ile koşu;
+tüfek, keskin, pompalı, kılıç ve kalpazan evinin önündeki roketatar. Botlarla tek başına ya da çevrim içi odada oynanır.
 
 ## Çalıştırma
 

@@ -24,7 +24,7 @@ export default {
   'ana.dokunmatik': 'Tetik Meydanı klavye ve fareyle oynanır. Bilgisayardan aç.',
   'ana.koltuk': '8 KOLTUK · BOTLAR BOŞ KOLTUKLARI DOLDURUR',
   'ana.alt': 'JOSEPHUZ OYUNLARI <span>ARENA ATIŞI · TARAYICIDA</span>',
-  'harita.mahalle.slogan': 'Karakol, depo, arada camlı evler.',
+  'harita.mahalle.slogan': 'Batıda karakol, doğuda depo, ortada kalpazan evi.',
 
   'mod.herkes': 'Herkes Herkese',
   'mod.takim': 'Takım Çatışması',
@@ -140,7 +140,6 @@ export default {
   'yardim.kos': '<kbd>SHIFT</kbd> Basılı tut: koş',
   'yardim.bak': '<kbd>FARE</kbd> Bak',
   'yardim.zipla': '<kbd>SPACE</kbd> Zıpla · havada bir kez daha',
-  'yardim.tas': '<kbd>SARI TAŞ</kbd> Zıplatma: çatıya, kuleye',
   'yardim.menu': '<kbd>ESC</kbd> Menü',
   'yardim.atis': 'ATIŞ',
   'yardim.ates': '<kbd>SOL TIK</kbd> Ateş',
@@ -152,6 +151,6 @@ export default {
   'yardim.kilic': '<kbd>V</kbd> Kılıçla hızlı vuruş',
   'yardim.tab': '<kbd>TAB</kbd> Skor tablosu',
   'yardim.f1': '<kbd>F1</kbd> Kontroller',
-  'yardim.metin': 'Kafaya isabet daha çok can götürür: tüfekte <b>2×</b>, keskinde <b>2,5×</b> (tek atış). Kılıçla arkadan vuruş <b>2×</b>. Roketatar orta kulenin tepesinde, 3 roketle gelir; patlama seni de iter: <b>roketle zıplama</b> mümkün. Can paketleri köprülerin altında. 4,5 saniye vurulmazsan can yenilenir.',
+  'yardim.metin': 'Kafaya isabet daha çok can götürür: tüfekte <b>2×</b>, keskinde <b>2,5×</b> (tek atış), pompalıda <b>1,5×</b>. Kılıçla arkadan vuruş <b>2×</b>. Roketatar ortadaki kalpazan evinin kapısı önünde, 3 roketle gelir; patlama seni de iter: <b>roketle zıplama</b> mümkün. Can paketleri (+50 can) dört yandaki iki katlı tuğla evlerin zemin katında. 4,5 saniye vurulmazsan can yenilenir.',
   'yardim.tamam': 'ANLADIM →',
 };
