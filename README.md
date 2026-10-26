@@ -6,6 +6,9 @@
 
 **Play / Oyna:** https://tetikmeydani.josephuz.com · **Source / Kaynak:** https://github.com/JosephUz/tetikmeydani
 
+<p align="center"><img src="docs/ekran/1.jpg" alt="Tetik Meydanı" width="100%"></p>
+<p align="center"><img src="docs/ekran/2.jpg" alt="Tetik Meydanı" width="49%"> <img src="docs/ekran/3.jpg" alt="Tetik Meydanı" width="49%"></p>
+
 Juland'ın kutu karakterleriyle tarayıcıda hızlı arena atış oyunu (ev.io esinli). Çift zıplama, Shift ile koşu;
 tüfek, keskin, pompalı, kılıç ve kalpazan evinin önündeki roketatar. Botlarla tek başına ya da çevrim içi odada oynanır.
 
