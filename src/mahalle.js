@@ -1,5 +1,5 @@
 // Faz 65: Dış Mahalle (Tetik Meydanı'nın Juland'daki yeri). Son Plaka'nın altındaki düz alan kuzeye ve batıya büyüdü:
-// 96×102 blokluk, duvarla çevrili bir mahalle. Batıda Polis'in karakolu, doğuda Kartel'in deposu, tam ortada dört kapılı
+// 96×102 blokluk, duvarla çevrili bir mahalle. Batıda Alplerin ocağı, doğuda Kartel'in deposu, tam ortada dört kapılı
 // kalpazan evi (çalınan çuvallar kalpazanın yanında); arada içine girilen, camlarından ateş edilen evler ve sokaklar.
 // Tek tanım iki yere gider: dunya.js bunları Juland bloğu olarak koyar (herkes görür, çarpar), Tetik'in mahalle haritası
 // (tetikmeydani/haritalar/mahalle.js) aynı kutulardan çarpışma kutusu kurar: maçtaki oyuncu, bot ve Juland'dan yürüyen aynı
@@ -85,7 +85,7 @@ for (const x of [-28, 25]) zem(x, MZ0 + 1, x + 2, MZ1 - 1, B.YOL); // kuzey–g�
 zem(-2, MZ0 + 1, 1, MZ1 - 1, B.YOL); // orta sokak
 zem(-7, -7, 6, 6, B.TAS);
 
-// Çevre duvarı: dört yüksek taş, üstü tuğla; kapılar yalnız batı yarısında (doğu Kartel'in arkası: çuvalı getiren polisin
+// Çevre duvarı: dört yüksek taş, üstü tuğla; kapılar yalnız batı yarısında (doğu Kartel'in arkası: çuvalı getiren alpin
 // tarafından girer). Batıda iki, kuzeyde ve güneyde birer kapı (yan cadde ve sokak duvara vardığı yerde).
 kutu(MX0, 0, MZ0, MX1, 3, MZ0, B.TAS); kutu(MX0, 0, MZ1, MX1, 3, MZ1, B.TAS); kutu(MX0, 0, MZ0, MX0, 3, MZ1, B.TAS); kutu(MX1, 0, MZ0, MX1, 3, MZ1, B.TAS);
 kutu(MX0, 3, MZ0, MX1, 3, MZ0, B.TUGLA); kutu(MX0, 3, MZ1, MX1, 3, MZ1, B.TUGLA); kutu(MX0, 3, MZ0, MX0, 3, MZ1, B.TUGLA); kutu(MX1, 3, MZ0, MX1, 3, MZ1, B.TUGLA);
@@ -100,13 +100,13 @@ ev(cizici(false, false), { x0: -5, z0: -5, x1: 4, z1: 4, duvar: B.TUGLA, kapilar
   ici: k => { for (const [x, z] of [[-4, -4], [3, -4], [-4, 3], [3, 3]]) k(x, 0, z, x, 1, z, B.HAZINE); } });
 kutu(-1, 9, -1, 0, 9, 0, B.FENER); // mahyada fener: uzaktan seçilir
 
-// Bir taraf (Polis batı, Kartel doğu: x aynası). Karakol / depo ve iki yarıdaki (kuzey, güney: z aynası) evler.
+// Bir taraf (Alpler batı, Kartel doğu: x aynası). Karakol / depo ve iki yarıdaki (kuzey, güney: z aynası) evler.
 function taraf(mx) {
   const t = cizici(mx, false), polis = !mx, renk = polis ? B.MAVI : B.KIRMIZI;
-  // Merkez yapı: iki katlı, orta caddeye (merkeze) ve arka avluya kapılı. Polis'te sıva + mavi bant (karakol), Kartel'de
+  // Merkez yapı: iki katlı, orta caddeye (merkeze) ve arka avluya kapılı. Alplerde sıva + mavi bant (karakol), Kartel'de
   // tahta + kırmızı bant (depo).
   ev(t, { x0: -42, z0: -8, x1: -33, z1: 7, kat: 2, duvar: polis ? B.SIVA : B.TAHTA, kapilar: ['e', 'w'], bant: renk });
-  t.kutu(-38, 16, -1, -37, 16, 0, renk); // çatının mahyasında tepe lambası (polis mavi, kartel kırmızı)
+  t.kutu(-38, 16, -1, -37, 16, 0, renk); // çatının mahyasında tepe lambası (alpler mavi, kartel kırmızı)
   if (polis) { t.kutu(-36, 0, 4, -35, 0, 5, B.MASA); t.kutu(-41, 4, 4, -40, 4, 5, B.KITAPLIK); }
   else { t.kutu(-41, 0, -4, -40, 0, -3, B.HAZINE); t.kutu(-41, 0, 5, -41, 1, 6, B.HAZINE); t.kutu(-36, 4, 4, -35, 4, 5, B.HAZINE); }
   // Arka avlu: alçak duvar ve yığılmış sandıklar.
@@ -159,7 +159,7 @@ export const mahalleUst = (x, z) => UST.get(`${x},${z}`) ?? (zemin.has(`${x},${z
 /** Tetik'te çarpar mı: katı bloklar; cam mermiyi geçirir. */
 export const mahalleCarpar = t => BLOK[t].kati && t !== B.CAM;
 
-// Yerler (mahalle koordinatı): kalpazan ortadaki evin ortasında, batıya (Polis'in tarafına, çuvalın geldiği yöne) bakar;
+// Yerler (mahalle koordinatı): kalpazan ortadaki evin ortasında, batıya (Alplerin tarafına, çuvalın geldiği yöne) bakar;
 // çuvallar yanında.
 export const MAHALLE_YERLER = {
   kalpazan: { x: 0, z: 0, yaw: Math.PI / 2 }, // yaw: modelin dönüşü (π/2: batıya bakar)
